@@ -28,7 +28,7 @@ curl -fsSL https://claude.ai/install.sh | bash
 Install SVOP from https://github.com/atarazevich/svop and set up the harness for this project.
 ```
 
-Claude installs everything else. Your only step is one GitHub login.
+Claude installs everything else. You log in to Claude and to GitHub, and answer two or three questions: what you are making, which template, and whether to keep your own files.
 
 ## What it takes off your shoulders
 
@@ -37,7 +37,7 @@ Claude installs everything else. Your only step is one GitHub login.
 | **Say what you want**, in five words or a voice note | Writes it as a task: what is in, what is out, when it is done |
 | **Look at a design** and say yes | Draws it, has a critic score it, fixes it before you see it |
 | **Test once**, by hand, what no test can | Builds it, each task in its own copy of the project |
-| **Decide** the few things only you can | **Three reviews** before anything lands |
+| **Decide** the few things only you can | **Three reviewers**: the rules have them check every change before it lands |
 | | Version numbers, release notes, cleanup of old copies and disk |
 | | Remembers every task in flight, across days away |
 | | Reports in one line |
@@ -46,16 +46,17 @@ Claude installs everything else. Your only step is one GitHub login.
 
 | | |
 |---|---|
-| **16 days** | One orchestrator session, running a live web service |
+| **16 days** | One orchestrator session, running a live web service. The next four rows are from this session |
 | **152** | Owner messages. About 11 a day. 27% were one-liners like "go" or "yes to both" |
-| **128 / 111** | Commits shipped / issues closed by the teams |
+| **128 / 111** | Commits shipped / issues closed by the teams in those 16 days |
 | **~6** | Times the owner typed into a team's terminal in 16 days |
 | **9** | Production incidents the monitor team found, ticketed and saw fixed on its own |
-| **~1,000** | Reviewer runs. 95% caught at least one problem before code landed (median 6–7) |
-| **1.4%** | Closed issues reopened: 6 of ~430 |
+| **~1,000** | Reviewer runs, all projects, since August 2026. 95% of reviews flagged at least one problem before code landed; median 6–7 problems flagged per review |
+| **1.4%** | Closed issues reopened: 6 of ~430, all projects, all time |
 | **1.5 → 0.3** | "It's broken" messages per day, before SVOP vs with it. Different products, so read it as a direction |
 
 From the author's own products, run with SVOP.
+<sub>Source: the author's git history, issue tracker and session logs; two products, 2026.</sub>
 
 ## How you work with it
 
@@ -78,7 +79,7 @@ You
 |---|---|
 | **★ orchestrator** | Turns what you say into tasks, sends each to its team, tells you only what needs you |
 | **◇ team** | One Claude session per area. Builds through helper agents: explore, design, critic, developer, three reviewers |
-| **The checks** | A design critic scores every screen. Three reviewers check every change: correctness, duplication, simplicity |
+| **The checks** | By the rules, a design critic scores every screen and three reviewers check every change: correctness, duplication, simplicity |
 
 Teams answer to the orchestrator, never to you. You can look into a `◇` tab. **You never have to.**
 
@@ -96,9 +97,9 @@ Setup asks which layout fits and recommends one.
 
 | | **Learn first** (a course) | **One AI chat** | **SVOP** |
 |---|---|---|---|
-| Time to first result | Weeks | Minutes | Minutes |
+| First working result | After the course | The same day | The same day you install it |
 | What you must know | The tools, before you start | How to steer it, step by step | What you want |
-| Who checks the work | You | You | A critic and three reviewers, before it lands |
+| Who checks the work | You | You | The rules have a critic and three reviewers check it before it lands |
 | When it breaks | You debug | You notice, you ask again | Tracked as a task; a monitor can catch it first |
 | What you do all day | Study, then build | Watch it and correct it | Say, look, decide |
 
