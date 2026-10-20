@@ -49,7 +49,7 @@ The owner fills this table at setup. One row per area. A small project has one t
 
 When the owner says "set up the harness", the session that hears it does these steps, in order:
 
-1. **Check the tools and the repository.** `claude --version`, `herdr --version`, `gh auth status`. If a tool is missing or `gh` is not logged in, follow steps 3 and 4 of SVOP's `INSTALL.md` (in `~/.svop`), then continue. If the folder is not a git repository, run `git init`. If it has no commits, make a first commit. If it has no GitHub remote (`gh repo view` fails), run `gh repo create <folder name> --private --source . --push`.
+1. **Check the tools and the repository.** `claude --version`, `herdr --version`, `gh auth status`. If a tool is missing or `gh` is not logged in, follow steps 3 and 4 of SVOP's `INSTALL.md` (in `~/.svop`), then continue. If `git config user.name` or `user.email` is empty, set them as in step 5 of SVOP's `INSTALL.md` before any commit. If the folder is not a git repository, run `git init`. If it has no commits, make a first commit. If it has no GitHub remote (`gh repo view` fails), run `gh repo create <folder name> --private --source . --push`.
 2. **Check the files.** The six agents are in `~/.claude/agents/`. `development-workflow.md`, `design-workflow.md`, `github-issues.md` and `knowledge.md` are in `~/.claude/rules/`. `team.md` and `worktrees.md` are in `.claude/rules/` of this project. If one is missing, stop and name it.
 3. **Create the labels**, if they do not exist:
    ```
