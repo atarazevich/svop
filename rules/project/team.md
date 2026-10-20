@@ -19,11 +19,11 @@ Once an issue is defined, the owner stops following it. The harness carries it t
 
 ## Teams
 
-The owner fills this table at setup. One row per area. A small project has one team.
+Filled at setup from a template in `~/.svop/templates/`. One row per area. A small project has one team.
 
-| Session and tab | Owns |
-|---|---|
-| `<team>` | `<folders or area it owns, for example: web/ and its issues>` |
+| Session and tab | Owns | Boundary |
+|---|---|---|
+| `<team>` | `<folders or area it owns, for example: web/ and its issues>` | `<what it never does>` |
 
 ## Names
 
@@ -56,7 +56,7 @@ When the owner says "set up the harness", the session that hears it does these s
    gh label create idea --color FBCA04 --description "Needs exploration"
    gh label create ready --color 0E8A16 --description "Scoped, executable"
    ```
-4. **Fill the Teams table.** Look at the top-level folders. Propose one team per area, with the folders each one owns. If the project has no folders yet, use one team named `build` that owns everything; add a team when a second area appears. Ask the owner to confirm. Write the table into this file. Commit `team.md` and `worktrees.md` together in one commit, then push.
+4. **Fill the Teams table.** Read `CLAUDE.md` and the top-level folders, then pick the template in `~/.svop/templates/` that fits: `web-service.md` (backend, agent, dashboard, monitor), `app.md` (app, site) or `start-small.md` (one `build` team). Ask the owner one question: name the three templates in one line each, say which you recommend and why. Recommend by what `CLAUDE.md` describes; when unsure, recommend `start-small.md`. Copy the chosen template's Teams table into this file, map each row's Owns to the real folders, and add the template's other sections below the table. Commit `team.md` and `worktrees.md` together in one commit, then push.
 5. **Check herdr is running.** `herdr status`. If no server runs, ask the owner to open herdr in a terminal.
 6. **Start the sessions** in herdr. Every herdr command prints JSON. First run `herdr workspace list` and look for a workspace whose `label` is `<project>`; use its `workspace_id`. If there is none, create it and read `workspace_id` from the output. For each tab, the new pane id is `result.root_pane.pane_id` in the output of `herdr tab create`.
 

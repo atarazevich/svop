@@ -1,133 +1,151 @@
 # SVOP
 
-**Single owner. Very simple. Opinionated. Product development harness.**
+**For anyone who has an idea.**
 
-You have an idea and you know what you want to make. You do not need a course first. Install this and start working.
+No course, no bootcamp, no "AI engineering" program. Install it and start building.
 
-A harness is a set of written instructions that turns Claude Code into a small team of AI agents. They write the code, check it and ship it. You decide what gets built.
+SVOP is Claude Code plus a small team of AI agents that plan, build, check and ship. You decide.
 
-SVOP is the setup its author builds and ships their own products with, every day.
+<sub>**S**ingle owner · **V**ery simple · **O**pinionated · **P**roduct development harness</sub>
 
-<br>
+## What you need
+
+- A Mac
+- A Claude Pro or Max plan
+- An idea
 
 ## Start
 
-SVOP is tested on macOS. It needs a paid Claude subscription that includes Claude Code (Pro or Max). Several teams working at once use more of the plan's limit, so Max suits daily work.
-
-Open the Terminal app and paste this line. It downloads and installs Claude Code:
+**1. Install Claude Code.** Open the Terminal app and paste:
 
 ```sh
 curl -fsSL https://claude.ai/install.sh | bash
 ```
 
-Create a folder for your project (an empty folder is fine). In the terminal, type `cd `, drag the folder onto the window, and press Enter. Then type `claude` and paste this sentence:
+**2. Hand it SVOP.** Make a folder for your project, open it in Terminal (`cd ` then drag the folder in), type `claude`, and paste:
 
-> Install SVOP from https://github.com/atarazevich/svop and set up the harness for this project.
-
-Claude installs the other tools it needs and asks you to log in to GitHub once. It asks what you are making and proposes how to split the work.
-
-One of those tools is herdr, a terminal app that shows each Claude session as a tab. When setup is done, you switch to the `★ orchestrator` tab and talk there. The steps Claude follows are in [INSTALL.md](INSTALL.md). You never need to read them.
-
-<br>
-
-## What changes for you
-
-You keep the idea and the decisions, and you judge the results by looking at them. The harness does the rest.
-
-| You do | The harness does |
-|---|---|
-| Say what you want, in five words or a long voice note | Turns it into written tasks, each saying what is in, what is out, and when it is done |
-| Look at a design in the browser and say yes | Draws it, has a critic score it, fixes it before you see it |
-| Answer the few questions only you can answer | Writes the code, each task in its own copy of the project |
-| Read a one-line report | Has every change checked by three reviewers and fixes what they find |
-| Say "stop" when a task is not worth it | Version numbers, release notes, saving the work, cleaning up old copies and disk |
-| Come back after days away | Keeps every open task written down; one summary catches you up |
-
-<br>
-
-## How it is built
-
-```mermaid
-flowchart LR
-    you(("You")) <--> orch["★ orchestrator<br/>writes tasks, follows up<br/>writes no code"]
-    orch -- "written task" --> web["◇ web"]
-    orch -- "written task" --> app["◇ app"]
-    web -. "done · blocked · question" .-> orch
-    app -. "done · blocked · question" .-> orch
-    web --> sw["explore → design → build<br/>→ 3 reviews → fix → save"]
-    app --> sa["explore → design → build<br/>→ 3 reviews → fix → save"]
+```
+Install SVOP from https://github.com/atarazevich/svop and set up the harness for this project.
 ```
 
-You talk to one Claude session, the `★ orchestrator`. It turns what you say into written tasks on GitHub and sends each one to the right team. It tells you only what needs you, and it writes no code.
+Claude installs everything else. Your only step is one GitHub login.
 
-Each `◇ team` is another Claude session that owns one area of the project, such as the website or the app. Every task goes through the same steps, done by helper agents the team starts. One explores, one designs, one scores the design, one writes the code, and three review it.
+## What it takes off your shoulders
 
-The teams answer to the orchestrator, never to you. You can look into a `◇` tab at any time. You never have to.
+| **You** | **SVOP** |
+|---|---|
+| **Say what you want**, in five words or a voice note | Writes it as a task: what is in, what is out, when it is done |
+| **Look at a design** and say yes | Draws it, has a critic score it, fixes it before you see it |
+| **Test once**, by hand, what no test can | Builds it, each task in its own copy of the project |
+| **Decide** the few things only you can | **Three reviews** before anything lands |
+| | Version numbers, release notes, cleanup of old copies and disk |
+| | Remembers every task in flight, across days away |
+| | Reports in one line |
 
-<br>
+## Proof
 
-## A day with SVOP
+| | |
+|---|---|
+| **16 days** | One orchestrator session, running a live web service |
+| **152** | Owner messages. About 11 a day. 27% were one-liners like "go" or "yes to both" |
+| **128 / 111** | Commits shipped / issues closed by the teams |
+| **~6** | Times the owner typed into a team's terminal in 16 days |
+| **9** | Production incidents the monitor team found, ticketed and saw fixed on its own |
+| **~1,000** | Reviewer runs. 95% caught at least one problem before code landed (median 6–7) |
+| **1.4%** | Closed issues reopened: 6 of ~430 |
+| **1.5 → 0.3** | "It's broken" messages per day, before SVOP vs with it. Different products, so read it as a direction |
 
-From the author's logs: one day of five hours, with about twenty messages from the owner. Most of them were under six words.
+From the author's own products, run with SVOP.
 
-| | You | The harness |
+## How you work with it
+
+1. **Say it.** "check what I found" → it proposes the work → "go, do everything".
+2. **Look at it.** A design board opens in your browser. You say "looks good".
+3. **Use it.** One short report, often spoken aloud. You test once.
+
+## How it is organised
+
+```
+You
+└── ★ orchestrator      the one chat you talk to; writes tasks, follows up, writes no code
+    ├── ◇ team (web)    owns one area; runs its own build-and-review
+    ├── ◇ team (app)
+    └── ◇ team (...)
+          explore → design → critic → build → 3 reviewers → fix → land
+```
+
+| Part | What it does |
+|---|---|
+| **★ orchestrator** | Turns what you say into tasks, sends each to its team, tells you only what needs you |
+| **◇ team** | One Claude session per area. Builds through helper agents: explore, design, critic, developer, three reviewers |
+| **The checks** | A design critic scores every screen. Three reviewers check every change: correctness, duplication, simplicity |
+
+Teams answer to the orchestrator, never to you. You can look into a `◇` tab. **You never have to.**
+
+## Templates
+
+Setup asks which layout fits and recommends one.
+
+| Template | Teams | For |
 |---|---|---|
-| 12:43 | Send a link: "check what I found" | Reads it and proposes the work |
-| 12:46 | "go, do everything" | Writes two tasks and sends them to two teams |
-| 13:12 | A design opens in your browser | The critic has already scored it, over three rounds |
-| 13:13 | "design looks good to me" | Building starts from the approved design |
-| 13:15 | "I can't use the app for dictations" | Finds that it caused this, says so, fixes it and writes a rule (see below) |
-| 13:25 | | A reviewer finds the same code written twice; it is merged into one |
-| 13:45 | | A reviewer finds the app could say "permission granted" when it was not. Fixed before you see it |
-| 13:52 | Your long voice note about version numbers | Becomes a script that picks the next version number by itself |
-| 14:02 | Test one drag by hand for ten minutes, because no test can | Writes the separate bug you found as its own task |
-| 14:04 | "onboarding went perfectly" | The new version is put live where it runs; three changes are done by evening |
+| [**Web service**](templates/web-service.md) | `backend` API, database, deploys · `agent` the AI your users talk to · `dashboard` your view of it · `monitor` watches production and opens tickets | A service on a server |
+| [**App**](templates/app.md) | `app` the app and its releases · `site` website and launch material | Something people install |
+| [**Start small**](templates/start-small.md) | `build` owns everything | A new idea. Add a team when a second area appears |
 
-Every update ends in a table of tasks and a short list called "What only you can do". In another project the owner wrote "yes to all" to approve two plans at once. Later they wrote "let him do it manually" to drop a task, and every team stopped work on it within a minute.
+## Compared
 
-<br>
+| | **Learn first** (a course) | **One AI chat** | **SVOP** |
+|---|---|---|---|
+| Time to first result | Weeks | Minutes | Minutes |
+| What you must know | The tools, before you start | How to steer it, step by step | What you want |
+| Who checks the work | You | You | A critic and three reviewers, before it lands |
+| When it breaks | You debug | You notice, you ask again | Tracked as a task; a monitor can catch it first |
+| What you do all day | Study, then build | Watch it and correct it | Say, look, decide |
 
 ## When it goes wrong
 
-At 13:15 that same day the owner wrote: "I can't use the app for dictations." The orchestrator had deleted a copy of the project that the running app was started from.
+The owner noticed their app had stopped taking dictation.
 
-It replied "Sorry, the outage was my fault" and restarted the app. Then it wrote a rule: before you delete a copy of the project, check that no running program uses it. That rule is now in [`worktrees.md`](rules/project/worktrees.md), and every team follows it.
+The orchestrator found the cause was its own: it had deleted a copy of the project the running app was started from. It said so, fixed it, and wrote a rule: check that nothing running uses a copy before you delete it ([`worktrees.md`](rules/project/worktrees.md)).
 
-It also reports what did not work. A design that scored 7 out of 10 after three rounds went to the owner with the score shown. The owner decided.
+## It keeps itself in order
 
-An install waits while the owner is recording. The harness never quits an app that is in use.
+Every correction you give becomes a rule in its own file. One home per fact, no history in the rules, old rules deleted: [`knowledge.md`](rules/global/knowledge.md).
 
-<br>
+<details>
+<summary><b>What you accept</b></summary>
 
-## How the instructions stay small
+- **One owner.** For one person who decides everything, not a team of people.
+- **GitHub.** Tasks live on GitHub. Setup creates a private repository if your folder has none.
+- **Teams act without asking.** They run commands and change files without prompting you, each in its own copy of the project. Your own chat keeps your usual permission prompts.
+- **Usage.** Several teams at once use more of your plan's limit. Max suits daily work.
+- **No settings.** SVOP is a few plain text files. If a rule does not fit, edit the file.
 
-Every correction you give becomes a rule in its own file. Every fact has one home, and other files point to it.
+</details>
 
-Lessons that will still hold next month move into rules. History stays in GitHub, not in the instructions. The rule for this is [`knowledge.md`](rules/global/knowledge.md).
+<details>
+<summary><b>What it changes on your computer, and how to remove it</b></summary>
 
-<br>
+**Adds**
 
-## What you accept
+- Six agent files and four rule files in `~/.claude/` (Claude Code's hidden settings folder). An existing file with the same name is kept as `<name>.md.bak`.
+- Two rule files in your project's `.claude/rules/`, and a short `CLAUDE.md` if there is none.
+- Two GitHub labels: `idea` and `ready`.
+- The tools `gh` and `herdr`, if missing. herdr shows each Claude session as a tab.
+- A copy of this repository in `~/.svop`.
 
-- **One owner.** SVOP is for one person who decides everything, not for a team of people.
-- **GitHub.** Tasks are kept on GitHub. Setup creates a private GitHub project for your folder if it has none.
-- **Teams act without asking.** Teams run commands and change files without asking you first. Each one works in a separate copy of the project.
-- **Three reviews first.** The rules tell every team to have each change checked by three reviewers before it reaches the main version of your project. The orchestrator keeps your own permission settings and asks as usual.
-- **No options.** SVOP is a few plain text files. If a rule does not fit, edit the file.
+**Remove**
 
-<br>
+1. Delete the files listed under Files from `~/.claude/` and from your project's `.claude/rules/`.
+2. Rename any `.bak` file back.
+3. Delete `CLAUDE.md` if setup created it, and `~/.svop`.
+4. `gh label delete idea` and `gh label delete ready`.
+5. Optional: `brew uninstall herdr gh`.
 
-## What it changes on your computer
+</details>
 
-It adds six agent files and four rule files to `~/.claude/`. That is a hidden folder in your home folder, which Claude Code reads in every project. If you already have a file with the same name, your file is kept as a backup copy named `<name>.md.bak`.
-
-In your project, it adds two rule files under `.claude/rules/`. If there is no `CLAUDE.md`, it adds one: a short text file that says what you are making and for whom. On GitHub it adds two labels, `idea` and `ready`, which mark how far each task is thought through. It also installs herdr and `gh`, GitHub's command-line tool, if they are missing.
-
-**Remove it:** delete the files listed below from `~/.claude/` and from your project's `.claude/rules/`. Rename any `.bak` file back to its old name. Delete `CLAUDE.md` if setup created it. Remove the labels with `gh label delete idea` and `gh label delete ready`. herdr and `gh` stay installed; remove them with `brew uninstall herdr gh` if you want.
-
-<br>
-
-## Files
+<details>
+<summary><b>Files</b></summary>
 
 ```
 INSTALL.md          the steps Claude follows to install SVOP
@@ -139,8 +157,10 @@ rules/global/       four rules → ~/.claude/rules/
                     github-issues, knowledge
 rules/project/      two rules  → <your project>/.claude/rules/
                     team, worktrees
+templates/          team layouts setup offers
+                    web-service, app, start-small
 ```
 
-<br>
+</details>
 
-MIT License. See [LICENSE](LICENSE).
+MIT license. See [LICENSE](LICENSE).
