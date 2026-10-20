@@ -129,7 +129,7 @@ Every correction you give becomes a rule in its own file. One home per fact, no 
 
 **Adds**
 
-- Six agent files and four rule files in `~/.claude/` (Claude Code's hidden settings folder). An existing file with the same name is kept as `<name>.md.bak`.
+- Six agent files, five rule files and the `grill` skill in `~/.claude/` (Claude Code's hidden settings folder). An existing file with the same name is kept as `<name>.md.bak`.
 - Two rule files in your project's `.claude/rules/`, and a short `CLAUDE.md` if there is none.
 - Two GitHub labels: `idea` and `ready`.
 - The tools `gh` and `herdr`, if missing. herdr shows each Claude session as a tab.
@@ -153,9 +153,11 @@ INSTALL.md          the steps Claude follows to install SVOP
 agents/             six agents → ~/.claude/agents/
                     developer, code-reviewer, bloat-reviewer,
                     ponytail-reviewer, designer, design-critic
-rules/global/       four rules → ~/.claude/rules/
+rules/global/       five rules → ~/.claude/rules/
                     development-workflow, design-workflow,
-                    github-issues, knowledge
+                    github-issues, knowledge, orchestration
+skills/grill/       /grill (Matt Pocock, MIT): questions your plan
+                    until nothing is assumed → ~/.claude/skills/
 rules/project/      two rules  → <your project>/.claude/rules/
                     team, worktrees
 templates/          team layouts setup offers
