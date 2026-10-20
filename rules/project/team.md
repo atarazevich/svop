@@ -1,0 +1,71 @@
+# Team
+
+## Why
+
+One chat that does everything fills with execution. Then no room is left to think.
+
+So the work is split into two spaces:
+- **Discovery**: the owner and the orchestrator decide what is worth doing and define it as an issue.
+- **Execution**: a team builds the defined issue.
+
+Once an issue is defined, the owner stops following it. The harness carries it to done and reports back.
+
+## Roles
+
+1. **Owner**: the one human. Decides.
+2. **Orchestrator**: the one session the owner talks to. It turns decisions into issues, sends each issue to the team that owns its area, and follows up. It answers the teams' simple questions itself and tells the owner after. It writes no code.
+3. **Teams**: one session per area of the project. A team runs its issues through subagents (`development-workflow.md`, `design-workflow.md`).
+4. **Subagents**: `Explore`, `developer`, `code-reviewer`, `bloat-reviewer`, `ponytail-reviewer`, `designer`, `design-critic`. All code is written here.
+
+## Teams
+
+The owner fills this table at setup. One row per area. A small project has one team.
+
+| Session and tab | Owns |
+|---|---|
+| `<team>` | `<folders or area it owns, for example: web/ and its issues>` |
+
+## Names
+
+- **Orchestrator**: session `<project>-orchestrator`, tab label `★ orchestrator`.
+- **Team**: session `<team>`, tab label `◇ <team>`. The owner may look in but never has to follow it.
+- A tab with no mark is the owner's own and not part of the harness.
+
+`<project>` is the name of the project folder.
+
+## How work moves
+
+- Work for a team is a `ready` issue (`github-issues.md`) plus one message to the team's session: `SendMessage` to `<team>`, text `new task: #N`. Research needs no issue.
+- A team reports to `<project>-orchestrator` the same way, with one of three messages:
+  - **done**: the commit hash.
+  - **blocked**: what was tested, what failed, the one step needed.
+  - **question**: the question and the team's recommendation.
+- Teams talk to the orchestrator, never to the owner. If the owner types in a team's tab, the team answers there, briefly, and goes on.
+- Work stays with the team that owns its area. To go faster, a team runs subagents in parallel, or the orchestrator starts a second session of the same team (`<team>-2`).
+
+## Setting up the harness
+
+When the owner says "set up the harness", the session that hears it does these steps, in order:
+
+1. **Check the tools.** `claude --version`, `herdr --version`, `gh auth status`. The project is a git repository with a GitHub remote (`gh repo view`). If one fails, stop and tell the owner what to install or fix.
+2. **Check the files.** The six agents are in `~/.claude/agents/`. `development-workflow.md`, `design-workflow.md` and `github-issues.md` are in `~/.claude/rules/`. `team.md` and `worktrees.md` are in `.claude/rules/` of this project. If one is missing, stop and name it.
+3. **Create the labels**, if they do not exist: `gh label create idea` and `gh label create ready`.
+4. **Fill the Teams table.** Look at the top-level folders. Propose one team per area, with the folders each one owns. Ask the owner to confirm. Write the table into this file and commit it.
+5. **Check herdr is running.** `herdr status`. If no server runs, ask the owner to open herdr in a terminal.
+6. **Start the sessions** in herdr. Read each new id from the command output.
+
+```
+herdr workspace create --label <project> --cwd <project path>          # if it does not exist
+herdr tab create --workspace <workspace id> --cwd <project path> --label "★ orchestrator"
+herdr pane run <pane id> "claude -n <project>-orchestrator"
+herdr tab create --workspace <workspace id> --cwd <project path> --label "◇ <team>"
+herdr pane run <pane id> "claude --permission-mode bypassPermissions --settings '{\"autoCompactEnabled\":true}' -n <team>"
+```
+
+Repeat the last two lines for each team. Teams start with auto-compact on, because they run long without the owner. The orchestrator keeps the owner's default.
+
+7. **Hand over.** Tell the owner to switch to the `★ orchestrator` tab and talk only there.
+
+To restart after a crash, run step 6 again; use `claude --resume <session id>` in place of `claude -n ...` to keep a session's history.
+
+Status: `herdr agent list`, `herdr pane read <pane id>`.
