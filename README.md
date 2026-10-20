@@ -35,7 +35,7 @@ rules/project/      team template, worktrees → <your project>/.claude/rules/
 - [Claude Code](https://docs.claude.com/en/docs/claude-code)
 - [herdr](https://herdr.dev), a terminal workspace manager for agent sessions
 - [gh](https://cli.github.com), logged in (`gh auth login`)
-- A project in a git repository with a GitHub remote
+- A project folder. Setup makes it a git repository with a private GitHub remote if it is not one yet.
 
 ## Install
 
@@ -48,6 +48,8 @@ mkdir -p <your project>/.claude/rules
 cp svop/rules/project/*.md <your project>/.claude/rules/
 ```
 
+The agents and the global rules go in `~/.claude` and apply to every project you open in Claude Code. The project rules apply to this project only.
+
 `cp` overwrites files with the same name. Check `~/.claude/agents/` and `~/.claude/rules/` first if you already have your own.
 
 ## First run
@@ -56,7 +58,7 @@ Open herdr. Open Claude Code in your project and say:
 
 > set up the harness
 
-It checks the tools, creates the `idea` and `ready` labels, proposes the teams for your project and asks you to confirm, then starts the orchestrator and team tabs in herdr. Then switch to the `★ orchestrator` tab.
+It checks the tools, creates the GitHub repository if needed, creates the `idea` and `ready` labels, proposes the teams for your project and asks you to confirm, then starts the orchestrator and team tabs in herdr. Then switch to the `★ orchestrator` tab.
 
 ## Day to day
 
@@ -64,6 +66,10 @@ It checks the tools, creates the `idea` and `ready` labels, proposes the teams f
 - Teams report back to the orchestrator: done, blocked, or a question with a recommendation. The orchestrator tells you what needs you.
 - For a UI change, you approve a design board in the browser before any code is written.
 - You can look into a `◇` tab at any time. You never have to.
+
+## What you accept
+
+Teams run with `--permission-mode bypassPermissions` and auto-compact on, so they work without stopping to ask. The orchestrator keeps your own settings. Installing SVOP means accepting that.
 
 ## What it is not
 

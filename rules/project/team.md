@@ -35,6 +35,8 @@ The owner fills this table at setup. One row per area. A small project has one t
 
 ## How work moves
 
+`SendMessage` is Claude Code's built-in messaging between sessions on the same machine. A session is addressed by the name it was started with (`claude -n <name>`).
+
 - Work for a team is a `ready` issue (`github-issues.md`) plus one message to the team's session: `SendMessage` to `<team>`, text `new task: #N`. Research needs no issue.
 - A team reports to `<project>-orchestrator` the same way, with one of three messages:
   - **done**: the commit hash.
@@ -47,24 +49,29 @@ The owner fills this table at setup. One row per area. A small project has one t
 
 When the owner says "set up the harness", the session that hears it does these steps, in order:
 
-1. **Check the tools.** `claude --version`, `herdr --version`, `gh auth status`. The project is a git repository with a GitHub remote (`gh repo view`). If one fails, stop and tell the owner what to install or fix.
+1. **Check the tools and the repository.** `claude --version`, `herdr --version`, `gh auth status`. If a tool fails, stop and tell the owner what to install or fix. If the folder is not a git repository, run `git init`. If it has no commits, make a first commit. If it has no GitHub remote (`gh repo view` fails), run `gh repo create <folder name> --private --source . --push`.
 2. **Check the files.** The six agents are in `~/.claude/agents/`. `development-workflow.md`, `design-workflow.md` and `github-issues.md` are in `~/.claude/rules/`. `team.md` and `worktrees.md` are in `.claude/rules/` of this project. If one is missing, stop and name it.
-3. **Create the labels**, if they do not exist: `gh label create idea` and `gh label create ready`.
-4. **Fill the Teams table.** Look at the top-level folders. Propose one team per area, with the folders each one owns. Ask the owner to confirm. Write the table into this file and commit it.
+3. **Create the labels**, if they do not exist:
+   ```
+   gh label create idea --color FBCA04 --description "Needs exploration"
+   gh label create ready --color 0E8A16 --description "Scoped, executable"
+   ```
+4. **Fill the Teams table.** Look at the top-level folders. Propose one team per area, with the folders each one owns. If the project has no folders yet, use one team named `build` that owns everything; add a team when a second area appears. Ask the owner to confirm. Write the table into this file. Commit `team.md` and `worktrees.md` together in one commit, then push.
 5. **Check herdr is running.** `herdr status`. If no server runs, ask the owner to open herdr in a terminal.
-6. **Start the sessions** in herdr. Read each new id from the command output.
+6. **Start the sessions** in herdr. Every herdr command prints JSON. First run `herdr workspace list` and look for a workspace whose `label` is `<project>`; use its `workspace_id`. If there is none, create it and read `workspace_id` from the output. For each tab, the new pane id is `result.root_pane.pane_id` in the output of `herdr tab create`.
 
 ```
-herdr workspace create --label <project> --cwd <project path>          # if it does not exist
+herdr workspace create --label <project> --cwd <project path>          # only if none has this label
 herdr tab create --workspace <workspace id> --cwd <project path> --label "★ orchestrator"
 herdr pane run <pane id> "claude -n <project>-orchestrator"
 herdr tab create --workspace <workspace id> --cwd <project path> --label "◇ <team>"
 herdr pane run <pane id> "claude --permission-mode bypassPermissions --settings '{\"autoCompactEnabled\":true}' -n <team>"
 ```
 
-Repeat the last two lines for each team. Teams start with auto-compact on, because they run long without the owner. The orchestrator keeps the owner's default.
+Repeat the last two lines for each team. Teams start with auto-compact on and without permission prompts, because they run long without the owner. The orchestrator keeps the owner's own settings.
 
-7. **Hand over.** Tell the owner to switch to the `★ orchestrator` tab and talk only there.
+7. **Check the sessions.** Run `ListAgents`. The orchestrator and every team must appear by name. If one is missing, read its pane (`herdr pane read <pane id>`) and fix it.
+8. **Hand over.** Tell the owner to switch to the `★ orchestrator` tab and talk only there.
 
 To restart after a crash, run step 6 again; use `claude --resume <session id>` in place of `claude -n ...` to keep a session's history.
 
