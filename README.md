@@ -36,7 +36,7 @@ You keep the idea and the decisions, and you judge the results by looking at the
 
 | You do | The harness does |
 |---|---|
-| Say what you want, in five words or a long voice note | Turns it into written tasks, each with a scope and a "done when" |
+| Say what you want, in five words or a long voice note | Turns it into written tasks, each saying what is in, what is out, and when it is done |
 | Look at a design in the browser and say yes | Draws it, has a critic score it, fixes it before you see it |
 | Answer the few questions only you can answer | Writes the code, each task in its own copy of the project |
 | Read a one-line report | Has every change checked by three reviewers and fixes what they find |
@@ -76,12 +76,12 @@ From the author's logs: one day of five hours, with about twenty messages from t
 | 12:46 | "go, do everything" | Writes two tasks and sends them to two teams |
 | 13:12 | A design opens in your browser | The critic has already scored it, over three rounds |
 | 13:13 | "design looks good to me" | Building starts from the approved design |
-| 13:15 | "I can't use the app for dictations" | Finds its own mistake and fixes it (see below) |
+| 13:15 | "I can't use the app for dictations" | Finds that it caused this, says so, fixes it and writes a rule (see below) |
 | 13:25 | | A reviewer finds the same code written twice; it is merged into one |
 | 13:45 | | A reviewer finds the app could say "permission granted" when it was not. Fixed before you see it |
 | 13:52 | Your long voice note about version numbers | Becomes a script that picks the next version number by itself |
 | 14:02 | Test one drag by hand for ten minutes, because no test can | Writes the separate bug you found as its own task |
-| 14:04 | "onboarding went perfectly" | The new version is installed on your Mac; three changes are done by evening |
+| 14:04 | "onboarding went perfectly" | The new version is put live where it runs; three changes are done by evening |
 
 Every update ends in a table of tasks and a short list called "What only you can do". In another project the owner wrote "yes to all" to approve two plans at once. Later they wrote "let him do it manually" to drop a task, and every team stopped work on it within a minute.
 
@@ -112,18 +112,18 @@ Lessons that will still hold next month move into rules. History stays in GitHub
 - **One owner.** SVOP is for one person who decides everything, not for a team of people.
 - **GitHub.** Tasks are kept on GitHub. Setup creates a private GitHub project for your folder if it has none.
 - **Teams act without asking.** Teams run commands and change files without asking you first. Each one works in a separate copy of the project.
-- **Three reviews first.** A change reaches the main version of your project only after three reviews. The orchestrator keeps your own permission settings and asks as usual.
+- **Three reviews first.** The rules tell every team to have each change checked by three reviewers before it reaches the main version of your project. The orchestrator keeps your own permission settings and asks as usual.
 - **No options.** SVOP is a few plain text files. If a rule does not fit, edit the file.
 
 <br>
 
 ## What it changes on your computer
 
-In `~/.claude/`, the folder Claude Code reads on every project, it adds six agent files and four rule files. A file of yours with the same name is kept as `<name>.md.bak`.
+It adds six agent files and four rule files to `~/.claude/`. That is a hidden folder in your home folder, which Claude Code reads in every project. If you already have a file with the same name, your file is kept as a backup copy named `<name>.md.bak`.
 
-In your project, it adds two files under `.claude/rules/`, a `CLAUDE.md` if there is none, and two task labels on GitHub. It also installs herdr and GitHub's `gh` tool if they are missing.
+In your project, it adds two rule files under `.claude/rules/`. If there is no `CLAUDE.md`, it adds one: a short text file that says what you are making and for whom. On GitHub it adds two labels, `idea` and `ready`, which mark how far each task is thought through. It also installs herdr and `gh`, GitHub's command-line tool, if they are missing.
 
-**Remove it:** delete the files listed below from `~/.claude/` and from your project's `.claude/rules/`. Then rename any `.bak` file back to its old name.
+**Remove it:** delete the files listed below from `~/.claude/` and from your project's `.claude/rules/`. Rename any `.bak` file back to its old name. Delete `CLAUDE.md` if setup created it. Remove the labels with `gh label delete idea` and `gh label delete ready`. herdr and `gh` stay installed; remove them with `brew uninstall herdr gh` if you want.
 
 <br>
 
