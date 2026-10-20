@@ -1,6 +1,7 @@
 # SVOP
 
-**For anyone who has an idea.**
+A battle tested framework.
+**For anyone who wants to build.**
 
 No course, no bootcamp, no "AI engineering" program. Install it and start building.
 
