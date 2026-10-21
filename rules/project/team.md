@@ -50,7 +50,7 @@ Filled at setup from a template in `~/.svop/templates/`. One row per area. A sma
 When the owner says "set up the harness", the session that hears it does these steps, in order:
 
 1. **Check the tools and the repository.** `claude --version`, `herdr --version`, `gh auth status`. If a tool is missing or `gh` is not logged in, follow steps 3 and 4 of SVOP's `INSTALL.md` (in `~/.svop`), then continue. If `git config user.name` or `user.email` is empty, set them as in step 5 of SVOP's `INSTALL.md` before any commit. If the folder is not a git repository, run `git init`. If it has no commits, make a first commit. If it has no GitHub remote (`gh repo view` fails), run `gh repo create <folder name> --private --source . --push`.
-2. **Check the files.** The six agents are in `~/.claude/agents/`. `development-workflow.md`, `design-workflow.md`, `github-issues.md`, `knowledge.md` and `orchestration.md` are in `~/.claude/rules/`. `grill` is in `~/.claude/skills/`. `team.md` and `worktrees.md` are in `.claude/rules/` of this project. If one is missing, stop and name it.
+2. **Check the files.** In this project's `.claude/`: the six agents are in `agents/`. `development-workflow.md`, `design-workflow.md`, `github-issues.md`, `knowledge.md`, `orchestration.md`, `team.md` and `worktrees.md` are in `rules/`. `grill` is in `skills/`. If one is missing, stop and name it.
 3. **Create the labels**, if they do not exist:
    ```
    gh label create idea --color FBCA04 --description "Needs exploration"

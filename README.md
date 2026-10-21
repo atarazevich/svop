@@ -130,15 +130,15 @@ Every correction you give is saved as a memory. You decide which memories become
 
 **Adds**
 
-- Six agent files, five rule files and the `grill` skill in `~/.claude/` (Claude Code's hidden settings folder). An existing file with the same name is kept as `<name>.md.bak`.
-- Two rule files in your project's `.claude/rules/`, and a short `CLAUDE.md` if there is none.
+- Six agent files, seven rule files and the `grill` skill in your project's `.claude/` folder. Nothing goes into `~/.claude/`, so other projects stay as they are. An existing file with the same name is kept as `<name>.md.bak`.
+- A short `CLAUDE.md` if there is none.
 - Two GitHub labels: `idea` and `ready`.
 - The tools `gh` and `herdr`, if missing. herdr shows each Claude session as a tab.
 - A copy of this repository in `~/.svop`.
 
 **Remove**
 
-1. Delete the files listed under Files from `~/.claude/` and from your project's `.claude/rules/`.
+1. Delete the files listed under Files from your project's `.claude/`.
 2. Rename any `.bak` file back.
 3. Delete `CLAUDE.md` if setup created it, and `~/.svop`.
 4. `gh label delete idea` and `gh label delete ready`.
@@ -151,15 +151,15 @@ Every correction you give is saved as a memory. You decide which memories become
 
 ```
 INSTALL.md          the steps Claude follows to install SVOP
-agents/             six agents → ~/.claude/agents/
+agents/             six agents → .claude/agents/
                     developer, code-reviewer, bloat-reviewer,
                     ponytail-reviewer, designer, design-critic
-rules/global/       five rules → ~/.claude/rules/
+rules/global/       five rules → .claude/rules/
                     development-workflow, design-workflow,
                     github-issues, knowledge, orchestration
 skills/grill/       /grill (Matt Pocock, MIT): questions your plan
-                    until nothing is assumed → ~/.claude/skills/
-rules/project/      two rules  → <your project>/.claude/rules/
+                    until nothing is assumed → .claude/skills/
+rules/project/      two rules  → .claude/rules/
                     team, worktrees
 templates/          team layouts setup offers
                     web-service, app, start-small
