@@ -112,7 +112,7 @@ The orchestrator found the cause was its own: it had deleted a copy of the proje
 
 ## It keeps itself in order
 
-Every correction you give becomes a rule in its own file. One home per fact, no history in the rules, old rules deleted: [`knowledge.md`](rules/global/knowledge.md).
+Every correction you give is saved as a memory. You decide which memories become rules. One home per fact, no history in the rules, old rules deleted: [`knowledge.md`](rules/global/knowledge.md).
 
 <details>
 <summary><b>What you accept</b></summary>

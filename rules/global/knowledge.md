@@ -8,11 +8,11 @@ The harness learns as it works. This rule says where each new thing goes, so the
 - **Rules** (`.claude/rules/` for this project, `~/.claude/rules/` for every project): how to work. Orchestration, process, conventions. One topic per file, so a rule that is no longer needed can be deleted whole.
 - **Issues**: what is planned and in flight (`github-issues.md`).
 - **Git**: history. What changed, when, and why.
-- **Memory**: only short-lived notes about the current work. A lesson that will still hold next month moves out of memory into a rule.
+- **Memory**: where corrections and lessons go first. Save a correction from the owner as a memory, the same day.
 
 ## How a rule is born
 
-- A correction from the owner becomes a rule, not a note. Write it the same day, in the file that owns the topic.
+- Only the owner makes a rule. Nothing becomes a rule automatically, and an agent never decides on its own what goes into one. When the owner says to turn a memory into a rule, write it in the file that owns the topic and delete the memory.
 - Before you add anything, look for an existing home. Extend that file before you create a new one.
 - One authority per fact. Other files point to it by name and never repeat it. When you find a fact in two places, keep one and cut the other.
 - The why goes first in a rule, in one or two sentences. The rules below it follow from it.
