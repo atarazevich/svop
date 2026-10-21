@@ -65,7 +65,7 @@ herdr workspace create --label <project> --cwd <project path>          # only if
 herdr tab create --workspace <workspace id> --cwd <project path> --label "★ orchestrator"
 herdr pane run <pane id> "claude -n <project>-orchestrator"
 herdr tab create --workspace <workspace id> --cwd <project path> --label "◇ <team>"
-herdr pane run <pane id> "claude --permission-mode bypassPermissions --settings '{\"autoCompactEnabled\":true}' -n <team>"
+herdr pane run <pane id> "claude --permission-mode bypassPermissions --settings '{\"autoCompactEnabled\":true,\"outputStyle\":\"default\"}' -n <team>"
 ```
 
 Repeat the last two lines for each team. Teams start with auto-compact on and without permission prompts, because they run long without the owner. The orchestrator keeps the owner's own settings.
