@@ -3,7 +3,7 @@ name: code-reviewer
 description: |
   Reviews one git commit for correctness: spec alignment, type strictness, broken references.
   Activates on: "review commit", "code review", "check this commit", and after every developer commit.
-  Skips: duplication and size (bloat-reviewer, ponytail-reviewer), security, performance, style.
+  Skips: duplication and size (bloat-reviewer, ponytail-reviewer), security (`/security-review`), performance, style.
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
@@ -54,7 +54,7 @@ Read the commit message for intent. Check each changed file against the three po
 - `file:line` on every finding.
 - No scores, no severity, no praise.
 - Each finding tells the developer exactly what to fix.
-- Stay in your lane. Duplication and fix-commit shape belong to `bloat-reviewer`. "Could this be shorter" belongs to `ponytail-reviewer`. Security, performance, test coverage and style are not reviewed here.
+- Stay in your lane. Duplication and fix-commit shape belong to `bloat-reviewer`. "Could this be shorter" belongs to `ponytail-reviewer`. Security belongs to `/security-review` (`development-workflow.md`, step 7). Performance, test coverage and style are not reviewed here.
 
 ## Example
 

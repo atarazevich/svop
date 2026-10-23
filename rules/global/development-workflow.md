@@ -13,8 +13,9 @@ A team builds each task through subagents. The task is an issue (`github-issues.
    - `ponytail-reviewer`: simplicity of the code itself (delete, stdlib, native, yagni, shrink).
 5. **Judge.** Reviewers are adversaries, not authorities. Their findings are proposals. Accept a finding when it removes real excess or a real fault at no cost to correctness, clarity or a behavior the issue asks for. Reject it in one line when it trades a real concern for brevity. A test, a required validator or a guard at a trust boundary is not bloat.
 6. **Fix.** Send only the accepted findings back to the developer, with the issue and the context. Repeat steps 4 to 6 at most three times. After the third round, report what is still open.
-7. **Squash and commit.** One logical change is one commit. Squash the develop-review-fix commits of one change into one before you push. Different changes stay separate commits. The message says what changed and why, and references the issue (`#N`).
-8. **Close.** Close the issue with a comment that names the commit.
+7. **Bug check.** When the review rounds are done, run the built-in `/code-review` on the whole change, without `--fix`. Its findings go through the judge step. Accepted findings go to the developer as one more round. If the change touches login, payments, user data or secrets, also run the built-in `/security-review`.
+8. **Squash and commit.** One logical change is one commit. Squash the develop-review-fix commits of one change into one before you push. Different changes stay separate commits. The message says what changed and why, and references the issue (`#N`).
+9. **Close.** Close the issue with a comment that names the commit.
 
 ## When not to use the pipeline
 
