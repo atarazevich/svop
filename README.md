@@ -1,5 +1,7 @@
 # SVOP
 
+> **Work in progress.** SVOP is early and changes every week. It comes from the author's own projects, and the install flow is still being tested on new machines. Expect rough edges.
+
 A battle tested framework.
 **For anyone who wants to build.**
 
