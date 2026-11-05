@@ -92,9 +92,11 @@ Setup asks which layout fits and recommends one.
 
 | Template | Teams | For |
 |---|---|---|
-| [**Web service**](templates/web-service.md) | `backend` API, database, deploys · `agent` the AI your users talk to · `dashboard` your view of it · `monitor` watches production and opens tickets | A service on a server |
-| [**App**](templates/app.md) | `app` the app and its releases · `site` website and launch material | Something people install |
-| [**Start small**](templates/start-small.md) | `build` owns everything | A new idea. Add a team when a second area appears |
+| [**Web service**](templates/web-service.yaml) | `backend` API, database, deploys · `agent` the AI your users talk to · `dashboard` your view of it · `monitor` watches production and opens tickets | A service on a server |
+| [**App**](templates/app.yaml) | `app` the app and its releases · `site` website and launch material | Something people install |
+| [**Start small**](templates/start-small.yaml) | `build` owns everything | A new idea. Add a team when a second area appears |
+
+Two optional teams go into any template by choice: `product` keeps the goals, stages and decisions in `CLAUDE.md`, and `communication` plans and drafts posts about each stage for you to publish.
 
 ## Compared
 
@@ -110,11 +112,11 @@ Setup asks which layout fits and recommends one.
 
 The owner noticed their app had stopped taking dictation.
 
-The orchestrator found the cause was its own: it had deleted a copy of the project the running app was started from. It said so, fixed it, and wrote a rule: check that nothing running uses a copy before you delete it ([`worktrees.md`](rules/project/worktrees.md)).
+The orchestrator found the cause was its own: it had deleted a copy of the project the running app was started from. It said so, fixed it, and wrote a rule: check that nothing running uses a copy before you delete it ([`worktrees.md`](rules/worktrees.md)).
 
 ## It keeps itself in order
 
-Every correction you give is saved as a memory. You decide which memories become rules. One home per fact, no history in the rules, old rules deleted: [`knowledge.md`](rules/global/knowledge.md).
+Every correction you give is saved as a memory. You decide which memories become rules. One home per fact, no history in the rules, old rules deleted: [`knowledge.md`](rules/knowledge.md).
 
 <details>
 <summary><b>What you accept</b></summary>
@@ -132,7 +134,7 @@ Every correction you give is saved as a memory. You decide which memories become
 
 **Adds**
 
-- Six agent files, seven rule files and the `grill` skill in your project's `.claude/` folder. Nothing goes into `~/.claude/`, so other projects stay as they are. An existing file with the same name is kept as `<name>.md.bak`.
+- Six agent files, ten rule files, a `teams.yaml`, one folder per team and the `grill` skill in your project's `.claude/` folder. Nothing goes into `~/.claude/`, so other projects stay as they are. An existing file with the same name is kept as `<name>.md.bak`.
 - A short `CLAUDE.md` if there is none.
 - Two GitHub labels: `idea` and `ready`.
 - The tools `gh` and `herdr`, if missing. herdr shows each Claude session as a tab.
@@ -156,15 +158,17 @@ INSTALL.md          the steps Claude follows to install SVOP
 agents/             six agents → .claude/agents/
                     developer, code-reviewer, bloat-reviewer,
                     ponytail-reviewer, designer, design-critic
-rules/global/       five rules → .claude/rules/
-                    development-workflow, design-workflow,
-                    github-issues, knowledge, orchestration
+rules/              ten rules → .claude/rules/
+                    team, orchestration, knowledge, worktrees,
+                    issues-, development-, design-, product-,
+                    communication-, monitor-workflow
+teams/              one role.md per team → .claude/teams/<name>/
+                    build, backend, agent, dashboard, monitor,
+                    app, site, product, communication
+templates/          teams.yaml layouts setup offers
+                    web-service, app, start-small
 skills/grill/       /grill (Matt Pocock, MIT): questions your plan
                     until nothing is assumed → .claude/skills/
-rules/project/      two rules  → .claude/rules/
-                    team, worktrees
-templates/          team layouts setup offers
-                    web-service, app, start-small
 ```
 
 </details>

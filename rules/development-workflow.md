@@ -1,6 +1,6 @@
 # Development Workflow
 
-A team builds each task through subagents. The task is an issue (`github-issues.md`). Without an issue there is no developer run.
+A team builds each task through subagents. The task is an issue (`issues-workflow.md`). Without an issue there is no developer run.
 
 ## The pipeline
 

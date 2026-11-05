@@ -1,0 +1,11 @@
+# Template: Start small. For a new idea, or a project with one area. One team owns everything.
+version: 1
+project: <project>
+orchestrator:
+  session: <project>-orchestrator
+teams:
+  - name: build
+    owns: Everything in the project
+    boundary: None yet.
+    workflows: [issues, development, design]
+    status: active

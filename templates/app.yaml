@@ -1,0 +1,17 @@
+# Template: App. For an app people install, plus the site where they find and download it. Two teams.
+version: 1
+project: <project>
+orchestrator:
+  session: <project>-orchestrator
+teams:
+  - name: app
+    owns: "The app: its code, builds, versions and releases"
+    boundary: The only team that ships a new version of the app.
+    workflows: [issues, development, design]
+    status: active
+
+  - name: site
+    owns: "The website and launch material: pages, copy, screenshots, download links"
+    boundary: Never changes app code. Facts about the app come from the app team as an issue answer.
+    workflows: [issues, development, design]
+    status: active

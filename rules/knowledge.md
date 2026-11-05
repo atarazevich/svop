@@ -6,7 +6,7 @@ The harness learns as it works. This rule says where each new thing goes, so the
 
 - **`CLAUDE.md`** (project root): what the product is, for whom, and why. Structural facts every agent and subagent needs. No process, no lessons, no status journal.
 - **Rules** (`.claude/rules/` for this project, `~/.claude/rules/` for every project): how to work. Orchestration, process, conventions. One topic per file, so a rule that is no longer needed can be deleted whole.
-- **Issues**: what is planned and in flight (`github-issues.md`).
+- **Issues**: what is planned and in flight (`issues-workflow.md`).
 - **Git**: history. What changed, when, and why.
 - **Memory**: where corrections and lessons go first. Save a correction from the owner as a memory, the same day.
 

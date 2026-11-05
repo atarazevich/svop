@@ -1,0 +1,30 @@
+# Template: Web service. For a service that runs on a server: an API, an AI agent that talks
+# to your users, and a dashboard for you. Four teams.
+version: 1
+project: <project>
+orchestrator:
+  session: <project>-orchestrator
+teams:
+  - name: backend
+    owns: API, workers, database, deploys, every call to an outside service
+    boundary: The only code that writes to outside services. Other teams read through its API.
+    workflows: [issues, development]
+    status: active
+
+  - name: agent
+    owns: "The AI agent your users talk to: prompts, replies, the runtime"
+    boundary: Never builds against guessed fields.
+    workflows: [issues, development]
+    status: active
+
+  - name: dashboard
+    owns: Your own view of the service
+    boundary: Reads only. Anything it needs from the backend is an issue in the backend's area.
+    workflows: [issues, development, design]
+    status: active
+
+  - name: monitor
+    owns: Production failures. Read-only
+    boundary: Never fixes, deploys or approves. Reads, groups, opens tickets, routes, follows up.
+    workflows: [monitor]
+    status: active

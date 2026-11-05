@@ -45,7 +45,7 @@ mkdir -p <project>/.claude/agents <project>/.claude/rules <project>/.claude/skil
 Everything goes into the project. Never write to `~/.claude/`.
 
 - `~/.svop/agents/*.md` → `<project>/.claude/agents/`
-- `~/.svop/rules/global/*.md` and `~/.svop/rules/project/*.md` → `<project>/.claude/rules/`
+- `~/.svop/rules/*.md` → `<project>/.claude/rules/`
 - `~/.svop/skills/*/` → `<project>/.claude/skills/` (each skill is a folder)
 
 If `~/.claude/rules/` holds a rule with the same name, tell the owner in one line that both versions load in this project.
@@ -62,4 +62,4 @@ Follow "Setting up the harness" in `<project>/.claude/rules/team.md`, from step 
 
 ## 9. Hand over
 
-When `team.md` step 8 is done, tell the owner in two or three sentences: what is installed, which teams exist and what each owns, and that from now on they talk only in the `★ orchestrator` tab.
+When `team.md` step 8 is done, tell the owner in two or three sentences: what is installed, which teams exist (`.claude/teams.yaml`) and what each owns, and that from now on they talk only in the `★ orchestrator` tab.
