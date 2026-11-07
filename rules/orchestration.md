@@ -8,4 +8,5 @@ How a session runs its subagents. The pipeline itself is `development-workflow.m
 - **Reject vague output.** Send it back with a sharper definition of done.
 - **Challenge high-stakes claims.** When a conclusion would change a decision, give it to a second subagent to disprove.
 - **Name the scratchpad.** A dispatch that runs scripts or regenerates files says that outputs not meant for a commit go to the session scratchpad (`git.md`).
+- **Report only checked state.** Report a subagent's state only from a check made in this turn; otherwise say it is not checked. A `Subagent watch` message is a check you must answer.
 - **No silent skips, no silent workarounds.** A step not done, or done another way, is reported.
