@@ -112,7 +112,7 @@ Two optional teams go into any template by choice: `product` keeps the goals, st
 
 The owner noticed their app had stopped taking dictation.
 
-The orchestrator found the cause was its own: it had deleted a copy of the project the running app was started from. It said so, fixed it, and wrote a rule: check that nothing running uses a copy before you delete it ([`worktrees.md`](rules/worktrees.md)).
+The orchestrator found the cause was its own: it had deleted a copy of the project the running app was started from. It said so, fixed it, and wrote a rule: check that nothing running uses a copy before you delete it ([`git.md`](rules/git.md)).
 
 ## It keeps itself in order
 
@@ -159,7 +159,7 @@ agents/             six agents → .claude/agents/
                     developer, code-reviewer, bloat-reviewer,
                     ponytail-reviewer, designer, design-critic
 rules/              ten rules → .claude/rules/
-                    team, orchestration, knowledge, worktrees,
+                    team, orchestration, knowledge, git,
                     issues-, development-, design-, product-,
                     communication-, monitor-workflow
 teams/              one role.md per team → .claude/teams/<name>/

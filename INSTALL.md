@@ -48,6 +48,8 @@ Everything goes into the project. Never write to `~/.claude/`.
 - `~/.svop/rules/*.md` → `<project>/.claude/rules/`
 - `~/.svop/skills/*/` → `<project>/.claude/skills/` (each skill is a folder)
 
+If `<project>/.claude/rules/worktrees.md` exists from an older SVOP, rename it to `worktrees.md.bak`: `git.md` replaces it.
+
 If `~/.claude/rules/` holds a rule with the same name, tell the owner in one line that both versions load in this project.
 
 Before you copy, check each target. If a file with the same name exists and differs, do not overwrite it silently: show the owner what differs in one or two lines and ask whether to replace it. When they say yes, keep the old one as `<name>.md.bak`.

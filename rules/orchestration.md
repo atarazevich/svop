@@ -7,4 +7,5 @@ How a session runs its subagents. The pipeline itself is `development-workflow.m
 - **Define the output of every dispatch:** a summary under 250 words, bullets, `file:line` for every claim, and `BLOCKED:` at the start when the agent is blocked.
 - **Reject vague output.** Send it back with a sharper definition of done.
 - **Challenge high-stakes claims.** When a conclusion would change a decision, give it to a second subagent to disprove.
+- **Name the scratchpad.** A dispatch that runs scripts or regenerates files says that outputs not meant for a commit go to the session scratchpad (`git.md`).
 - **No silent skips, no silent workarounds.** A step not done, or done another way, is reported.
