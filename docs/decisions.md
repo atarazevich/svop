@@ -5,3 +5,6 @@ A team is a row in `.claude/teams.yaml` plus `.claude/teams/<name>/role.md`; a p
 
 ## 2026-11-07 — Git without destructive cleanup
 `worktrees.md` became `git.md`: no stash, outputs and baselines in the scratchpad, land with `--ff-only` so `git branch -d` works, stopped work on `abandoned/` branches. Context: the safety hook suggests `git stash` and then blocks `stash drop`, and squash-merged branches can only go with the blocked `branch -D`, so stashes and branches piled up across projects.
+
+## 2026-11-07 — Communication runs daily on a schedule
+Communication no longer waits for `stage done`: a launchd agent runs one headless pass a day (`schedule` in teams.yaml), picks at most three items since the last run, and asks the owner through the router (`bus`, since `claude -p` has no channel tools). Product owns a fourth CLAUDE.md section, Story. Context: content is born every day, not at stage ends, and session crons die with the session and expire after 7 days (#3).

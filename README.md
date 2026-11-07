@@ -96,7 +96,7 @@ Setup asks which layout fits and recommends one.
 | [**App**](templates/app.yaml) | `app` the app and its releases · `site` website and launch material | Something people install |
 | [**Start small**](templates/start-small.yaml) | `build` owns everything | A new idea. Add a team when a second area appears |
 
-Two optional teams go into any template by choice: `product` keeps the goals, stages and decisions in `CLAUDE.md`, and `communication` plans and drafts posts about each stage for you to publish.
+Two optional teams go into any template by choice: `product` keeps the goals, stages, decisions and story in `CLAUDE.md`, and `communication` runs once a day on a schedule: it picks what is worth telling and drafts posts for you to approve and publish.
 
 ## Compared
 
