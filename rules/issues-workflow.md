@@ -15,7 +15,7 @@ All work is tracked as issues. A project with a GitHub remote keeps them on GitH
 - The state is a label: `idea` or `ready`.
 - Create issues with `gh issue create`.
 - Check the target repository before any `gh` command that changes something (`gh repo view`).
-- A stage is a milestone. Each issue is in the milestone of its stage. Whether a stage is done is decided by its `Done when` (`plan` skill).
+- A stage is a milestone named by the stage's slug (`plan` skill). Each issue is in the milestone of its stage. Whether a stage is done is decided by its `Done when` (`plan` skill).
 
 ## File mode
 
@@ -29,7 +29,7 @@ All work is tracked as issues. A project with a GitHub remote keeps them on GitH
   ```
 - The body has the same parts as on GitHub. Comments go at the end of the file, each under a dated line.
 - To close an issue, set `status: done`.
-- A stage is the `stage:` field.
+- A stage is the `stage:` field, holding the stage's slug (`plan` skill).
 
 ## Lifecycle
 

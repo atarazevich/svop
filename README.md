@@ -170,7 +170,7 @@ templates/          teams.yaml layouts setup offers
 skills/grill/       /grill (Matt Pocock, MIT): questions your plan
                     until nothing is assumed → .claude/skills/
 skills/plan/        keeps docs/plan.md and CLAUDE.md current:
-                    fold, next, review → .claude/skills/
+                    fold, next, review; index.py builds the index → .claude/skills/
 ```
 
 </details>
