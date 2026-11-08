@@ -134,7 +134,7 @@ Every correction you give is saved as a memory. You decide which memories become
 
 **Adds**
 
-- Six agent files, ten rule files, a `teams.yaml`, one folder per team and the `grill` skill in your project's `.claude/` folder. Nothing goes into `~/.claude/`, so other projects stay as they are. An existing file with the same name is kept as `<name>.md.bak`.
+- Six agent files, eleven rule files, a `teams.yaml`, one folder per team and the `grill` and `plan` skills in your project's `.claude/` folder. Nothing goes into `~/.claude/`, so other projects stay as they are. An existing file with the same name is kept as `<name>.md.bak`.
 - A short `CLAUDE.md` if there is none.
 - Two GitHub labels: `idea` and `ready`.
 - The tools `gh` and `herdr`, if missing. herdr shows each Claude session as a tab.
@@ -158,9 +158,9 @@ INSTALL.md          the steps Claude follows to install SVOP
 agents/             six agents → .claude/agents/
                     developer, code-reviewer, bloat-reviewer,
                     ponytail-reviewer, designer, design-critic
-rules/              ten rules → .claude/rules/
+rules/              eleven rules → .claude/rules/
                     team, orchestration, knowledge, git,
-                    issues-, development-, design-, product-,
+                    plan, issues-, development-, design-, product-,
                     communication-, monitor-workflow
 teams/              one role.md per team → .claude/teams/<name>/
                     build, backend, agent, dashboard, monitor,
@@ -169,6 +169,8 @@ templates/          teams.yaml layouts setup offers
                     web-service, app, start-small
 skills/grill/       /grill (Matt Pocock, MIT): questions your plan
                     until nothing is assumed → .claude/skills/
+skills/plan/        keeps Goals, Stages, Decisions, Story current:
+                    fold, next, review → .claude/skills/
 ```
 
 </details>

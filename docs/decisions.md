@@ -8,3 +8,6 @@ A team is a row in `.claude/teams.yaml` plus `.claude/teams/<name>/role.md`; a p
 
 ## 2026-11-07 — Communication runs daily on a schedule
 Communication no longer waits for `stage done`: a launchd agent runs one headless pass a day (`schedule` in teams.yaml), picks at most three items since the last run, and asks the owner through the router (`bus`, since `claude -p` has no channel tools). Product owns a fourth CLAUDE.md section, Story. Context: content is born every day, not at stage ends, and session crons die with the session and expire after 7 days (#3).
+
+## 2026-11-08 — The plan is kept by the orchestrator with a `plan` skill
+No separate product team for now: `rules/plan.md` holds three triggers (fold, next, review) and `skills/plan/` holds the steps and the Stages format with a required Done when. Context: owner input that was planning got treated as tasks, and decisions were not checked against earlier ones; the owner chose one place for the plan over a new role (2026-11-08).

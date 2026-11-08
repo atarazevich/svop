@@ -54,7 +54,7 @@ Steps, in order:
    with one line per entry. A surprise or a miss: `SendMessage` to `product`, text
    `signal: <item> — <numbers>, <one line why>`. If product is not reachable, send a
    router `info` "Signal for product · <project>" with that text, and add the line to
-   the drafts file; the orchestrator forwards it to product.
+   the drafts file; the orchestrator forwards it to product, or, without a product team, runs `plan` fold on it.
 7. **Cursor.** Write the time and `git rev-parse HEAD` to the cursor. Commit the files
    of docs/communication/ that this pass changed, by name, in one commit (git.md).
 8. **Log.** End with one line: the date, the items picked, the messages sent, the

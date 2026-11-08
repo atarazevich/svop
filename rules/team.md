@@ -53,7 +53,6 @@ These are derived from the row and are never written down:
   - **blocked**: what was tested, what failed, the one step needed.
   - **question**: the question and the team's recommendation.
 - Teams talk to the orchestrator, never to the owner. If the owner types in a team's tab, the team answers there, briefly, and goes on.
-- When every issue of a stage is closed, the orchestrator sends `stage done: <stage>` to `product`, only if a product team exists.
 - Work stays with the team that owns its area. To go faster, a team runs subagents in parallel, or the orchestrator starts a second session of the same team (`<name>-2`).
 
 ## Setting up the harness
@@ -61,7 +60,7 @@ These are derived from the row and are never written down:
 When the owner says "set up the harness", the session that hears it does these steps, in order:
 
 1. **Check the tools and the repository.** `claude --version`, `herdr --version`, `gh auth status`. If a tool is missing or `gh` is not logged in, follow steps 3 and 4 of SVOP's `INSTALL.md` (in `~/.svop`), then continue. If `git config user.name` or `user.email` is empty, set them as in step 5 of SVOP's `INSTALL.md` before any commit. If the folder is not a git repository, run `git init`. If it has no commits, make a first commit. If it has no GitHub remote (`gh repo view` fails), ask the owner whether to keep the issues local. Local: issues use file mode (`issues-workflow.md`, `docs/issues/`); skip `gh repo create` and step 3. Otherwise run `gh repo create <folder name> --private --source . --push`.
-2. **Check the files.** In this project's `.claude/`: the six agents are in `agents/`. `team.md`, `orchestration.md`, `knowledge.md`, `git.md` and the `*-workflow.md` files are in `rules/`. `grill` is in `skills/`. If one is missing, stop and name it.
+2. **Check the files.** In this project's `.claude/`: the six agents are in `agents/`. `team.md`, `orchestration.md`, `knowledge.md`, `git.md`, `plan.md` and the `*-workflow.md` files are in `rules/`. `grill` and `plan` are in `skills/`. If one is missing, stop and name it.
 3. **Create the labels**, if they do not exist (GitHub mode only):
    ```
    gh label create idea --color FBCA04 --description "Needs exploration"

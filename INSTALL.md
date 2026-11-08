@@ -56,7 +56,7 @@ Before you copy, check each target. If a file with the same name exists and diff
 
 ## 7. Describe the product
 
-If the project has no `CLAUDE.md`, ask the owner one question: "What are you making, and for whom?" Write their answer as a short `CLAUDE.md` at the project root: what the product is, who uses it, and why. Nothing else goes there (`knowledge.md`).
+If the project has no `CLAUDE.md`, ask the owner one question: "What are you making, and for whom?" Write their answer as a short `CLAUDE.md` at the project root: what the product is, who uses it, and why. The plan sections come later, with the `plan` skill (`knowledge.md`).
 
 ## 8. Set up the harness
 
