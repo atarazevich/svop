@@ -5,7 +5,7 @@ Usage: python3 .claude/skills/plan/index.py [project_dir] [--out PATH]
 
 Top: the CLAUDE.md contract sections (About, Principles, Decisions, Story, Current stage).
 Below: every stage of docs/plan.md with its status; a stage whose page exists in
-docs/owner/stages/<slug>.html links to it. Stdlib only; the same input gives the same page.
+docs/owner/stages/<slug>.html links to it. Last: every other page in docs/owner/, by its <title>. Stdlib only; the same input gives the same page.
 """
 import argparse
 import html
@@ -142,6 +142,14 @@ def main():
                     f'<span class="st {st["status"]}">{st["status"]}</span> {title}</summary>\n'
                     f'{render(st["lines"])}</details>')
     stage_html = "\n".join(rows) if rows else '<p class="dim">No docs/plan.md yet.</p>'
+    others = []
+    for f in sorted((root / "docs" / "owner").glob("*.html")):
+        if f.name == "index.html":
+            continue
+        m = re.search(r"<title>(.*?)</title>", f.read_text(errors="replace"), re.S | re.I)
+        label = html.unescape(m.group(1).strip()) if m else f.stem
+        others.append(f'<li><a href="{html.escape(f.name)}">{html.escape(label)}</a></li>')
+    other_html = f'<section><h2>Other pages</h2>\n<ul>{"".join(others)}</ul></section>' if others else ""
 
     page = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -161,6 +169,7 @@ details{{border-top:1px solid var(--line);padding:10px 0}} summary{{cursor:point
 {chr(10).join(parts)}
 <section><h2>Stages</h2>
 {stage_html}</section>
+{other_html}
 </main></body></html>
 """
     out.parent.mkdir(parents=True, exist_ok=True)
