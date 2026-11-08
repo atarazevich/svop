@@ -62,6 +62,7 @@ When a stage closes, it gets a page, so the owner can catch up on stages that ra
 - **Setup, once per project**:
   - A launchd agent `svop.<project>.owner-pages` (`~/Library/LaunchAgents/`, `RunAtLoad` and `KeepAlive` true) runs `/usr/bin/python3 -m http.server <port> --bind 127.0.0.1 --directory <absolute project path>/docs/owner`.
   - `tailscale serve --bg --set-path /<project> http://127.0.0.1:<port>`. If `tailscale` is not on PATH, use `/Applications/Tailscale.app/Contents/MacOS/Tailscale`. The tailnet needs HTTPS certificates on.
+  - A project on an external volume (`/Volumes/...`): launchd's python3 cannot read it until the owner gives it Full Disk Access (System Settings → Privacy & Security). The server then answers 404 for every file; ask the owner for the grant.
   - The tailnet host is `Self.DNSName` from `tailscale status --json`, without the final dot.
   - Write the address and the port in CLAUDE.md, What runs here.
 - **Check before sending**: fetch the stage page and the index through the tailnet address. Each must answer and show what you wrote (the stage name and the commit at the top). If a check fails, say the link is not checked.
