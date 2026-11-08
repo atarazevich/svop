@@ -33,7 +33,7 @@ If one of these is missing or unclear, say what is missing before you start.
 ## How you work
 
 1. **Read first.** Read the affected files and their dependencies before you write.
-2. **Implement.** Follow the conventions in the project's CLAUDE.md.
+2. **Implement.** Follow the project's rules and the Principles in its CLAUDE.md.
 3. **Verify.** Run what the project has: syntax check, type check, lint, tests. Claim success only when all of them pass. For a UI change, look at the result next to the board.
 4. **Recover.** If a check fails, find the root cause and fix it. After three failed approaches, stop and report.
 

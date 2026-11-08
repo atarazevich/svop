@@ -14,3 +14,6 @@ No separate product team for now: `rules/plan.md` holds three triggers (fold, ne
 
 ## 2026-11-08 — A closed stage gets an owner page
 `plan` next writes `docs/owner/stages/<n>-<slug>.html` before it marks a stage done, and keeps `docs/owner/index.html`, served on the tailnet at `/<project>/`. Context: stages may run without the owner; he catches up from one page, and communication uses it as material.
+
+## 2026-11-08 — Stages in docs/plan.md; a CLAUDE.md contract
+Stages moved from `CLAUDE.md` to `docs/plan.md`, read only by the `plan` skill. `CLAUDE.md` holds only About, Principles, Decisions in force, Story and a one-line current stage (`knowledge.md`). Context: `CLAUDE.md` loads into every session and subagent, so detailed stages were dead weight there.

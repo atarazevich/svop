@@ -6,12 +6,12 @@ owner, and checks later whether they worked.
 
 ## Who
 - **communication**: picks, drafts and checks. Writes only in docs/communication/.
-- **product**: owns CLAUDE.md, with the Story section (product-workflow.md).
+- **Plan owner** (the orchestrator, or product if it exists): owns CLAUDE.md, with the Story section (`knowledge.md`).
 - **Owner**: approves, publishes the posts on the owner's own accounts, answers in the router.
 - **Router**: carries every request to the owner. The project is `project` in teams.yaml.
 
 ## Where
-- **Core context**: CLAUDE.md, Story first (product-workflow.md).
+- **Core context**: CLAUDE.md, Story first (`knowledge.md`).
 - **Cursor**: docs/communication/last-run, two lines: the time and the commit of the last pass.
 - **Drafts**: docs/communication/drafts/<YYYY-MM-DD>.md, one file per pass with picks.
 - **Posts**: docs/communication/posts.md, one entry per published item: date,
@@ -28,7 +28,7 @@ The pass runs headless (`claude -p`). Two things differ from a tab:
 
 Steps, in order:
 1. **Story.** If CLAUDE.md has no Story section, or it is empty: send one router
-   `confirm` "Story needed · <project>" to the owner, for product, with what Story
+   `confirm` "Story needed · <project>" to the owner, for the plan owner, with what Story
    holds. Draft nothing and leave the cursor. Go to step 8.
 2. **Since last time.** Read the cursor. No cursor: take the last 7 days. Sources since then:
    - `git log` since the cursor commit.

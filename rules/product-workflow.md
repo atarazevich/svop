@@ -1,7 +1,8 @@
 # Product Workflow
 
-For a team whose row in teams.yaml lists `product`. It keeps Goals, Stages,
-Decisions and Story in CLAUDE.md true. Every team, agent and subagent calibrates on them.
+For a team whose row in teams.yaml lists `product`. It keeps the plan (`docs/plan.md`)
+and the About, Principles, Decisions, Story and Current stage sections of CLAUDE.md true
+(the CLAUDE.md contract, `knowledge.md`). Every team, agent and subagent calibrates on them.
 Without a product team, the orchestrator keeps them (`plan.md`).
 
 ## Who
@@ -10,13 +11,9 @@ Without a product team, the orchestrator keeps them (`plan.md`).
 - **communication**: reads Story; sends signals.
 - **Owner**: decides, in the orchestrator chat or through the router.
 
-## Where: four sections of CLAUDE.md
-- **Goals**: what the project is for and for whom. Five lines at most.
-- **Stages**: in the format of the `plan` skill, which product uses for fold, next and review.
-- **Decisions**: the decisions in force, one line each, with the date. A replaced
-  decision is deleted; git keeps the history.
-- **Story**: who we write for, what we highlight, and why. Five lines at most.
-Other sections of CLAUDE.md belong to whoever wrote them.
+## Where
+- `docs/plan.md`: the stages, in the format of the `plan` skill.
+- `CLAUDE.md`: the sections of the contract in `knowledge.md`.
 
 ## Steps
 1. **Plan.** When: the orchestrator sends `plan: <words>` (the triggers in `plan.md`).
@@ -30,4 +27,4 @@ Other sections of CLAUDE.md belong to whoever wrote them.
 
 ## Rules
 - Never change a goal, a decision or Story on your own judgment.
-- Goals, decisions and Story live only in CLAUDE.md.
+- The plan lives only in `docs/plan.md`; decisions in force and Story only in CLAUDE.md.

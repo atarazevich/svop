@@ -96,7 +96,7 @@ Setup asks which layout fits and recommends one.
 | [**App**](templates/app.yaml) | `app` the app and its releases · `site` website and launch material | Something people install |
 | [**Start small**](templates/start-small.yaml) | `build` owns everything | A new idea. Add a team when a second area appears |
 
-Two optional teams go into any template by choice: `product` keeps the goals, stages, decisions and story in `CLAUDE.md`, and `communication` runs once a day on a schedule: it picks what is worth telling and drafts posts for you to approve and publish.
+Two optional teams go into any template by choice: `product` keeps the plan (`docs/plan.md`) and the decisions and story in `CLAUDE.md`, and `communication` runs once a day on a schedule: it picks what is worth telling and drafts posts for you to approve and publish.
 
 ## Compared
 
@@ -169,7 +169,7 @@ templates/          teams.yaml layouts setup offers
                     web-service, app, start-small
 skills/grill/       /grill (Matt Pocock, MIT): questions your plan
                     until nothing is assumed → .claude/skills/
-skills/plan/        keeps Goals, Stages, Decisions, Story current:
+skills/plan/        keeps docs/plan.md and CLAUDE.md current:
                     fold, next, review → .claude/skills/
 ```
 

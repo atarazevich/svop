@@ -19,7 +19,7 @@ Stop. Leave the files as they are, report the path and the blocked command in on
 
 ## Worktrees
 
-- A team that writes no code (product, communication), and the orchestrator for the plan and its pages (`CLAUDE.md`, `docs/owner/`), commit their own files directly on main, by name, with no worktree, and push if the project has a remote.
+- A team that writes no code (product, communication), and the orchestrator for the plan and its pages (`docs/plan.md`, `CLAUDE.md`, `docs/owner/`), commit their own files directly on main, by name, with no worktree, and push if the project has a remote.
 - A team develops each issue in its own git worktree, on a branch cut from current main (`origin/main` when the project has a remote).
 - Build output stays inside the worktree, in gitignored folders. Never commit it.
 - Heavy jobs (builds, test suites) run one at a time across all teams.

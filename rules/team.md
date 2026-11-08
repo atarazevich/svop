@@ -124,7 +124,7 @@ Status: `herdr agent list`, `herdr pane read <pane id>`.
 - The library also has `product` and `communication`, which no template includes. Their rows:
   ```yaml
   - name: product
-    owns: Goals, Stages, Decisions and Story in CLAUDE.md
+    owns: docs/plan.md and the CLAUDE.md contract sections (knowledge.md)
     boundary: Writes no code and posts nothing in public. Changes a goal, a decision or Story only after the owner says yes.
     workflows: [product]
     status: active
@@ -136,6 +136,6 @@ Status: `herdr agent list`, `herdr pane read <pane id>`.
     schedule: "10:07"
     status: active
   ```
-  When product exists, every other row that owns `CLAUDE.md` gets the boundary "Never edits Goals, Stages, Decisions or Story in CLAUDE.md".
+  When product exists, no other row edits `docs/plan.md` or `CLAUDE.md`.
 - **Pause.** Set `status: paused` and close the team's tab. A scheduled team: `launchctl bootout gui/$(id -u)/svop.<project>.<name>`, then `launchctl disable gui/$(id -u)/svop.<project>.<name>` so it does not start again at login. To resume: `launchctl enable` with the same target, then `launchctl bootstrap` as in step 6, and set `status: active`.
 - Commit the change.
