@@ -39,6 +39,7 @@ An issue starts as `idea`. To become `ready`, it needs at least one `Explore` pa
 
 - When a conversation finds future work, offer an issue.
 - Every change to an issue (scope, state, close) gets a comment that says why.
+- The session that decides (the orchestrator, or the team's main session that runs the pipeline; never the developer) comments at the moment it decides, not at close. After a judge step: each review point that changed substance, accepted or rejected, one line why; no routine passes or minor bugs. A decision of its own that is not in the body: the decision, one line why. Each round leaves its own comment.
 - When the owner asks "what do we have", list open issues as a table:
 
 | Issue | State | Value | Risk | Size |

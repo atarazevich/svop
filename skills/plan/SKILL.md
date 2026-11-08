@@ -48,7 +48,7 @@ When a stage closes, it gets a page, so the owner can catch up on stages that ra
 
 - **File**: `docs/owner/stages/<n>-<slug>.html`, one self-contained HTML file, readable on a phone, with the stage name, the date and the commit it was written from (`git rev-parse --short HEAD`) at the top.
 - **Index**: `docs/owner/index.html` is built from `docs/plan.md`: every stage with its status; each closed stage links to its page.
-- **Sources**: issues of the stage, `docs/decisions.md`, review logs (reviewer findings and the judge's verdicts, in the issues, commits and reports), design boards, experiment docs, git. Every claim names its source.
+- **Sources**: issues of the stage, `docs/decisions.md`, the decision comments in those issues (`issues-workflow.md`), the source for sections 4 and 5, design boards, experiment docs, git. Every claim names its source.
 - **Sections, top to bottom.** Short on top, deeper below; sections 3 to 8 open in `<details>`.
   1. What changed, and how to see or try it yourself: the command, the URL or the screen.
   2. The goal and `Done when`, with the evidence that it holds.
