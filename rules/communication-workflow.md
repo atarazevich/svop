@@ -34,6 +34,7 @@ Steps, in order:
    - `git log` since the cursor commit.
    - Issues opened, changed or closed: `gh` in GitHub mode, `docs/issues/` in file mode.
    - Changes to `docs/decisions.md`.
+   - Stage pages closed since the cursor (`docs/owner/stages/`, `plan` skill).
    - Router messages: the Drive folders `router-inbox/to-router` (the owner's voice
      requests and answers) and `router-inbox/from-router` (the teams' replies), files
      whose names contain `_<project>`. Use the Google Drive tools. If they are not

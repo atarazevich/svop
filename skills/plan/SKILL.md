@@ -38,9 +38,33 @@ The owner said "continue", "next" or "погнали дальше".
 
 1. Check the `current` stage against its `Done when`, with evidence (closed issues, results, commits).
 2. Not met: tell the owner in one line what is missing, and continue that stage.
-3. Met: mark it `done`, make the first `next` stage `current`, commit. No `next` stage left: ask the owner which `later` stage comes next.
+3. Met: write the stage page and update the index page (below). Then mark the stage `done` and make the first `next` stage `current`. Commit `CLAUDE.md` and the changed files in `docs/owner/` together, by name, on main (`git.md`). Check both links. No `next` stage left: ask the owner which `later` stage comes next.
 4. Break the current stage into issues for development (`issues-workflow.md`), and send them to the teams (`team.md`).
-5. Tell the owner in one line what starts.
+5. Tell the owner in one line what closed, with the link to its page, and in one line what starts.
+
+## Stage page
+
+When a stage closes, it gets a page, so the owner can catch up on stages that ran without him: without using the product, without guessing from commits.
+
+- **File**: `docs/owner/stages/<n>-<slug>.html`, one self-contained HTML file, readable on a phone, with the stage name, the date and the commit it was written from (`git rev-parse --short HEAD`) at the top.
+- **Index**: `docs/owner/index.html` lists every stage with its status; each closed stage links to its page.
+- **Sources**: issues of the stage, `docs/decisions.md`, review logs (reviewer findings and the judge's verdicts, in the issues, commits and reports), design boards, experiment docs, git. Every claim names its source.
+- **Sections, top to bottom.** Short on top, deeper below; sections 3 to 8 open in `<details>`.
+  1. What changed, and how to see or try it yourself: the command, the URL or the screen.
+  2. The goal and `Done when`, with the evidence that it holds.
+  3. Tasks: what was done, one line each, with the issue and the commit.
+  4. Decisions made without the owner: each with one line why. Mark the ones worth a second look.
+  5. Notable review findings: interesting points from reviewers and critics, and whether each was accepted or rejected.
+  6. Architecture and design: decisions, boards, screenshots.
+  7. Experiment results and cost.
+  8. Open questions left for later.
+- **Address**: `https://<tailnet host>/<project>/`, with the trailing slash, which serves `docs/owner/`. Links inside the pages are relative.
+- **Setup, once per project**:
+  - A launchd agent `svop.<project>.owner-pages` (`~/Library/LaunchAgents/`, `RunAtLoad` and `KeepAlive` true) runs `/usr/bin/python3 -m http.server <port> --bind 127.0.0.1 --directory <absolute project path>/docs/owner`.
+  - `tailscale serve --bg --set-path /<project> http://127.0.0.1:<port>`. If `tailscale` is not on PATH, use `/Applications/Tailscale.app/Contents/MacOS/Tailscale`. The tailnet needs HTTPS certificates on.
+  - The tailnet host is `Self.DNSName` from `tailscale status --json`, without the final dot.
+  - Write the address and the port in CLAUDE.md, What runs here.
+- **Check before sending**: fetch the stage page and the index through the tailnet address. Each must answer and show what you wrote (the stage name and the commit at the top). If a check fails, say the link is not checked.
 
 ## review
 

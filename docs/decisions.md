@@ -11,3 +11,6 @@ Communication no longer waits for `stage done`: a launchd agent runs one headles
 
 ## 2026-11-08 — The plan is kept by the orchestrator with a `plan` skill
 No separate product team for now: `rules/plan.md` holds three triggers (fold, next, review) and `skills/plan/` holds the steps and the Stages format with a required Done when. Context: owner input that was planning got treated as tasks, and decisions were not checked against earlier ones; the owner chose one place for the plan over a new role (2026-11-08).
+
+## 2026-11-08 — A closed stage gets an owner page
+`plan` next writes `docs/owner/stages/<n>-<slug>.html` before it marks a stage done, and keeps `docs/owner/index.html`, served on the tailnet at `/<project>/`. Context: stages may run without the owner; he catches up from one page, and communication uses it as material.
