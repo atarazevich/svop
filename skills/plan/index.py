@@ -3,7 +3,7 @@
 
 Usage: python3 .claude/skills/plan/index.py [project_dir] [--out PATH]
 
-Top: the CLAUDE.md contract sections (About, Principles, Decisions, Story, Current stage).
+Top: the CLAUDE.md contract sections (Goal, About, Principles, Decisions, Story, Current stage).
 Below: every stage of docs/plan.md with its status; a stage whose page exists in
 docs/owner/stages/<slug>.html links to it. Last: every other page in docs/owner/, by its <title>. Stdlib only; the same input gives the same page.
 """
@@ -12,7 +12,7 @@ import html
 import re
 from pathlib import Path
 
-SECTIONS = ["About", "Principles", "Decisions", "Story", "Current stage"]
+SECTIONS = ["Goal", "About", "Principles", "Decisions", "Story", "Current stage"]
 STAGE = re.compile(r"^###\s+(?:\d+\.\s+)?(?P<name>.+?)\s+[—-]\s+(?P<status>done|current|next|later)\b.*$", re.I)
 SLUG = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 
@@ -78,7 +78,7 @@ def claude_sections(text):
         if line.startswith("## "):
             seen_h2 = True
             title = line[3:].strip()
-            current = next((s for s in SECTIONS if title.lower().startswith(s.lower())), None)
+            current = next((s for s in SECTIONS if title.lower() == s.lower() or title.lower().startswith(s.lower() + " (")), None)
             if current:
                 found.setdefault(current, [])
             continue

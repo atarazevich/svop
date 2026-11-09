@@ -1,14 +1,14 @@
 # Product Workflow
 
 For a team whose row in teams.yaml lists `product`. It keeps the plan (`docs/plan.md`)
-and the About, Principles, Decisions, Story and Current stage sections of CLAUDE.md true
+and the Goal, About, Principles, Decisions, Story and Current stage sections of CLAUDE.md true
 (the CLAUDE.md contract, `knowledge.md`). Every team, agent and subagent calibrates on them.
 Without a product team, the orchestrator keeps them (`plan.md`).
 
 ## Who
-- **product**: the only writer of the four sections.
+- **product**: the only writer of the plan and those sections.
 - **Orchestrator**: forwards the owner's decisions; reports when a stage's issues are all closed.
-- **communication**: reads Story; sends signals.
+- **communication**: reads the Goal and Story; sends signals.
 - **Owner**: decides, in the orchestrator chat or through the router.
 
 ## Where

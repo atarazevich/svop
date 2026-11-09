@@ -16,11 +16,12 @@ The harness learns as it works. This rule says where each new thing goes, so the
 
 `CLAUDE.md` has these sections and nothing else:
 
-1. **About**: what the project is, for whom, and why.
-2. **Principles**: what to rely on while building it.
-3. **Decisions**: the global decisions in force, one line each. Their context and history are in `docs/decisions.md`.
-4. **Story**: who we write for, what we highlight, and why (communication reads it).
-5. **Current stage**: one line, the current stage's name and "plan in `docs/plan.md`".
+1. **Goal**: why we do this at all. The project's near goal, measurable and visible from outside (for example: stars, real users and their feedback; the first paying clients). A slot: when the owner has not formulated it yet, it stays empty.
+2. **About**: what the project is, for whom, and why.
+3. **Principles**: what to rely on while building it.
+4. **Decisions**: the global decisions in force, one line each. Their context and history are in `docs/decisions.md`.
+5. **Story**: who we write for, what we highlight, and why (communication reads it).
+6. **Current stage**: one line, the current stage's name and "plan in `docs/plan.md`".
 
 Everything else lives elsewhere: the plan in `docs/plan.md`, decision history in `docs/decisions.md`, how to work in rules, work items in issues, history in git.
 

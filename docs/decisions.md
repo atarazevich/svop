@@ -17,3 +17,6 @@ No separate product team for now: `rules/plan.md` holds three triggers (fold, ne
 
 ## 2026-11-08 — Stages in docs/plan.md; a CLAUDE.md contract
 Stages moved from `CLAUDE.md` to `docs/plan.md`, read only by the `plan` skill. `CLAUDE.md` holds only About, Principles, Decisions in force, Story and a one-line current stage (`knowledge.md`). Context: `CLAUDE.md` loads into every session and subagent, so detailed stages were dead weight there.
+
+## 2026-11-09 — CLAUDE.md has a Goal slot
+`Goal` is the first section of the CLAUDE.md contract: the near goal, measurable and visible from outside. It is a slot: empty is fine. Nothing is gated on it; the plan skill mentions it only when clearly relevant; the owner index shows it first. Context: the owner wants every project tied to a goal, but the goal forms in the owner's own time ("процесс внутри человека происходит"), so it is never forced (04:35, softened 04:40).

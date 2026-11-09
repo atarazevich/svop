@@ -1,11 +1,11 @@
 ---
 name: plan
-description: Keep the project plan (docs/plan.md, plus Decisions, Story and the current-stage line in CLAUDE.md) current. Use for fold (owner input that is an idea, refinement or change of direction), next ("continue", "next", "погнали дальше"), and review (a piece of work closed with a result). Triggers come from rules/plan.md.
+description: Keep the project plan (docs/plan.md, plus Goal, About, Principles, Decisions, Story and the current-stage line in CLAUDE.md) current. Use for fold (owner input that is an idea, refinement or change of direction), next ("continue", "next", "погнали дальше"), and review (a piece of work closed with a result). Triggers come from rules/plan.md.
 ---
 
 # Plan
 
-The stages live in `docs/plan.md`; only this skill reads it. This skill also keeps the sections of `CLAUDE.md` (the contract in `knowledge.md`): About, Principles, Decisions in force, Story, and the one line with the current stage's name. Owner input on any of them is folded like any other. `docs/decisions.md` keeps each decision's context and the replaced ones. History is git of these three files. No other storage.
+The stages live in `docs/plan.md`; only this skill reads it. This skill also keeps the sections of `CLAUDE.md` (the contract in `knowledge.md`): Goal, About, Principles, Decisions in force, Story, and the one line with the current stage's name. Owner input on any of them is folded like any other. `docs/decisions.md` keeps each decision's context and the replaced ones. History is git of these three files. No other storage.
 
 ## Stages format
 
@@ -34,10 +34,10 @@ The stages live in `docs/plan.md`; only this skill reads it. This skill also kee
 
 The owner gave an idea, a refinement or a change of direction.
 
-1. Read `docs/plan.md`, the Decisions in `CLAUDE.md` and `docs/decisions.md`.
+1. Read `docs/plan.md`, the Goal and Decisions in `CLAUDE.md`, and `docs/decisions.md`.
 2. Put the input where it belongs: an item in the right stage, a new stage (usually `later`), a changed `Done when`, or a Decision. Keep the owner's words. A new stage without a `Done when` from the owner gets one you propose, marked `(proposed)`.
 3. If it contradicts a Decision in force or an entry in `docs/decisions.md`, do not decide. Ask the owner through the router (`confirm`): the old decision, the new input, your recommendation. Change nothing until the answer.
-4. Otherwise rebuild the index page (below), then commit what changed together (`docs/plan.md`, `CLAUDE.md`, `docs/owner/index.html`, a `docs/decisions.md` entry for a new decision), and tell the owner in one or two lines what changed, in the channel the input came from.
+4. Otherwise rebuild the index page (below), then commit what changed together (`docs/plan.md`, `CLAUDE.md`, `docs/owner/index.html`, a `docs/decisions.md` entry for a new decision), and tell the owner in one or two lines what changed, in the channel the input came from. Mention the project's Goal only when it is clearly relevant; it may be empty, and that is fine.
 
 Fold plans; it never starts work.
 
@@ -48,7 +48,7 @@ The owner said "continue", "next" or "погнали дальше".
 1. Check the `current` stage against its `Done when`, with evidence (closed issues, results, commits).
 2. Not met: tell the owner in one line what is missing, and continue that stage.
 3. Met: write the stage page and update the index page (below). Then mark the stage `done` and make the first `next` stage `current` in `docs/plan.md`, and update the current-stage line in `CLAUDE.md`. Commit `docs/plan.md`, `CLAUDE.md` and the changed files in `docs/owner/` together, by name, on main (`git.md`). Check both links. No `next` stage left: ask the owner which `later` stage comes next.
-4. Break the current stage into issues for development (`issues-workflow.md`), and send them to the teams (`team.md`).
+4. 6. Break the current stage into issues for development (`issues-workflow.md`), and send them to the teams (`team.md`).
 5. Tell the owner in one line what closed, with the link to its page, and in one line what starts.
 
 ## Stage page
@@ -56,7 +56,7 @@ The owner said "continue", "next" or "погнали дальше".
 When a stage closes, it gets a page, so the owner can catch up on stages that ran without him: without using the product, without guessing from commits.
 
 - **File**: `docs/owner/stages/<slug>.html`, one self-contained HTML file, readable on a phone, with the stage name, the date and the commit it was written from (`git rev-parse --short HEAD`) at the top.
-- **Index**: `docs/owner/index.html`, built only by the script that ships with this skill: `python3 .claude/skills/plan/index.py` (from the project root). On top, from `CLAUDE.md`: About, Principles, Decisions, Story, Current stage. Below, from `docs/plan.md`: every stage with its status; a stage whose page exists links to it. Last, every other page in `docs/owner/` (not the index, not `stages/`), by its title. Run it whenever this skill changes `CLAUDE.md` or `docs/plan.md`, and commit the result with them. Never write the index by hand.
+- **Index**: `docs/owner/index.html`, built only by the script that ships with this skill: `python3 .claude/skills/plan/index.py` (from the project root). On top, from `CLAUDE.md`: Goal first, then About, Principles, Decisions, Story, Current stage. Below, from `docs/plan.md`: every stage with its status; a stage whose page exists links to it. Last, every other page in `docs/owner/` (not the index, not `stages/`), by its title. Run it whenever this skill changes `CLAUDE.md` or `docs/plan.md`, and commit the result with them. Never write the index by hand.
 - **Sources**: issues of the stage, `docs/decisions.md`, the decision comments in those issues (`issues-workflow.md`), the source for sections 4 and 5, design boards, experiment docs, git. Every claim names its source.
 - **Sections, top to bottom.** Short on top, deeper below; sections 3 to 8 open in `<details>`.
   1. What changed, and how to see or try it yourself: the command, the URL or the screen.
@@ -80,6 +80,6 @@ When a stage closes, it gets a page, so the owner can catch up on stages that ra
 
 A piece of work closed with a result, such as an experiment.
 
-1. Does the result change the plan: a goal, a stage, its `Done when`, a decision?
+1. Does the result change the plan: the Goal, a stage, its `Done when`, a decision?
 2. Yes: **fold** it as input, naming the result as the source.
 3. No: nothing to do.

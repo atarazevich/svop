@@ -11,7 +11,7 @@ owner, and checks later whether they worked.
 - **Router**: carries every request to the owner. The project is `project` in teams.yaml.
 
 ## Where
-- **Core context**: CLAUDE.md, Story first (`knowledge.md`).
+- **Core context**: CLAUDE.md, Story first, and the Goal when it is written (`knowledge.md`).
 - **Cursor**: docs/communication/last-run, two lines: the time and the commit of the last pass.
 - **Drafts**: docs/communication/drafts/<YYYY-MM-DD>.md, one file per pass with picks.
 - **Posts**: docs/communication/posts.md, one entry per published item: date,
