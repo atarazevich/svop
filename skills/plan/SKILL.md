@@ -48,7 +48,7 @@ The owner said "continue", "next" or "погнали дальше".
 1. Check the `current` stage against its `Done when`, with evidence (closed issues, results, commits).
 2. Not met: tell the owner in one line what is missing, and continue that stage.
 3. Met: write the stage page and update the index page (below). Then mark the stage `done` and make the first `next` stage `current` in `docs/plan.md`, and update the current-stage line in `CLAUDE.md`. Commit `docs/plan.md`, `CLAUDE.md` and the changed files in `docs/owner/` together, by name, on main (`git.md`). Check both links. No `next` stage left: ask the owner which `later` stage comes next.
-4. 6. Break the current stage into issues for development (`issues-workflow.md`), and send them to the teams (`team.md`).
+4. Break the current stage into issues for development (`issues-workflow.md`), and send them to the teams (`team.md`).
 5. Tell the owner in one line what closed, with the link to its page, and in one line what starts.
 
 ## Stage page

@@ -56,7 +56,7 @@ Before you copy, check each target. If a file with the same name exists and diff
 
 ## 7. Describe the product
 
-If the project has no `CLAUDE.md`, ask the owner one question: "What are you making, and for whom?" Write the answer as the About section, with an empty Goal section above it for when the owner has one, of a short `CLAUDE.md` at the project root: what the product is, who uses it, and why. The other sections of the contract come later (`knowledge.md`). If a `CLAUDE.md` exists with other content (stages, setup notes, how-to), leave it and tell the owner in one line: moving it out (stages to `docs/plan.md`, the rest to rules) is a separate step, shown to the owner as a diff first.
+If the project has no `CLAUDE.md`, ask the owner one question: "What are you making, and for whom?" Write the answer as the About section of a short `CLAUDE.md` at the project root (what the product is, who uses it, and why), with an empty Goal section above it for when the owner has one. The other sections of the contract come later (`knowledge.md`). If a `CLAUDE.md` exists with other content (stages, setup notes, how-to), leave it and tell the owner in one line: moving it out (stages to `docs/plan.md`, the rest to rules) is a separate step, shown to the owner as a diff first.
 
 ## 8. Set up the harness
 
