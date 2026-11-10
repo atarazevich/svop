@@ -8,7 +8,7 @@ SVOP is an open-source harness for Claude Code: an orchestrator chat plus teams 
 
 ## Principles
 
-- **Simple and useful, or not at all.** Everyone already has a mental model of how work gets done. A new concept, file or rule earns its place only if it is clear, simple and helps right away. Otherwise leave it out.
+- **Simple and useful, or not at all.** Everyone already has a mental model of how work gets done. A new concept, file or rule earns its place only if it is clear, simple and helps right away. "You can set up this, and that, and that" sounds nice; it is not the bar. Otherwise leave it out.
 
 ## Decisions
 
