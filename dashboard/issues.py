@@ -7,8 +7,10 @@ Reads, by code only and never writing to a project:
 - GitHub issues of a repository with a GitHub remote (`gh issue list`, reopens from the first 20 pages of
   `gh api .../issues/events`). A clone of someone else's repository is skipped: its GitHub owner must be
   the owner (`--owner`, default the gh user) or an organisation the gh user administers;
-- issue files `docs/issues/*.md` from git history: created when added, closed when `status: done` is set
-  or the file is deleted, reopened when a later commit moves it back from done.
+- issue files `docs/issues/*.md` from git history (author dates): created when added, closed when the
+  frontmatter says `status: done` or the file is deleted, reopened when a later commit moves it back from
+  done; a renamed file stays the same issue. A file added already done has no start date: it counts as
+  closed but stays out of the median.
 The page shows private project names: it is for the owner only. Same input gives the same page,
 except the one "built at" line.
 """
@@ -17,6 +19,7 @@ import html
 import json
 import os
 import re
+import shutil
 import statistics
 import subprocess
 import sys
@@ -75,6 +78,7 @@ class Issue(NamedTuple):
     created: datetime
     closed: Optional[datetime]
     reopens: int
+    started: bool = True  # False: added already done, so the opened-to-closed time is unknown
 
 
 def order(i: Issue) -> Tuple[datetime, datetime, int]:
@@ -161,71 +165,131 @@ def owners(owner: str, runner: Runner = run) -> Set[str]:
 
 
 MAX_PAGES = 20  # issue events pages of 100 read per repository
+MAX_ISSUES = 1000
 
 
-def reopens(slug: str, runner: Runner = run) -> Tuple[Dict[int, int], bool]:
-    """Reopen count per issue number, and whether paging stopped at MAX_PAGES."""
+def reopens(slug: str, runner: Runner = run) -> Tuple[Dict[int, int], Optional[str]]:
+    """Reopen count per issue number, and a note when the count is incomplete."""
     counts: Dict[int, int] = {}
     for page in range(1, MAX_PAGES + 1):
         out = runner(["gh", "api", f"repos/{slug}/issues/events?per_page=100&page={page}",
                       "--jq", 'length, (.[] | select(.event == "reopened") | .issue.number)'], None)
         if out is None:
-            return counts, False
+            return counts, f"reopens incomplete (gh failed on page {page})"
         size, *numbers = out.split()
         for n in numbers:
             counts[int(n)] = counts.get(int(n), 0) + 1
         if int(size) < 100:
-            return counts, False
-    return counts, True
+            return counts, None
+    return counts, f"reopens incomplete (stopped after {MAX_PAGES} pages of issue events)"
 
 
-def gh_issues(slug: str, runner: Runner = run) -> Tuple[Optional[List[Issue]], bool]:
-    """GitHub issues of one repository (None when gh cannot read it), and whether reopens were cut off."""
-    listed = runner(["gh", "issue", "list", "-R", slug, "--state", "all", "--limit", "1000",
-                     "--json", "number,title,state,createdAt,closedAt,labels,milestone"], None)
+def gh_trouble(cmd: List[str]) -> str:
+    """Why a gh command failed, in gh's own words (it is run again to read its message)."""
+    if shutil.which("gh") is None:
+        return "gh not installed"
+    try:
+        err = subprocess.run(cmd, capture_output=True, text=True, timeout=60).stderr.strip()
+    except (OSError, subprocess.TimeoutExpired) as e:
+        err = str(e)
+    line = err.splitlines()[0] if err else "no message from gh"
+    if re.search(r"auth login|not logged|authenticat|rate limit", line, re.IGNORECASE):
+        return f"gh not logged in or rate-limited: {line}"
+    return f"repository not readable: {line}"
+
+
+def gh_issues(slug: str, runner: Runner = run,
+              trouble: Callable[[List[str]], str] = gh_trouble) -> Tuple[Optional[List[Issue]], List[str]]:
+    """GitHub issues of one repository (None when gh cannot read it), and notes on what is missing."""
+    cmd = ["gh", "issue", "list", "-R", slug, "--state", "all", "--limit", str(MAX_ISSUES),
+           "--json", "number,title,state,createdAt,closedAt,labels,milestone"]
+    listed = runner(cmd, None)
     if listed is None:
-        return None, False
-    reopened, cut = reopens(slug, runner)
+        return None, [trouble(cmd)]
+    rows = json.loads(listed)
+    notes = [f"first {MAX_ISSUES} issues only"] if len(rows) >= MAX_ISSUES else []
+    reopened, note = reopens(slug, runner)
+    notes += [note] if note else []
     return [Issue(moment(i["createdAt"]), moment(i["closedAt"]) if i.get("closedAt") else None,
                   reopened.get(i["number"], 0))
-            for i in sorted(json.loads(listed), key=lambda i: i["number"])], cut
+            for i in sorted(rows, key=lambda i: i["number"])], notes
 
 
 # ---- issue files ----
 
 MARK = "\x01"
-STATUS = re.compile(r"^\+status:\s*[\"']?([\w-]+)", re.IGNORECASE)
+STATUS = re.compile(r"status:\s*[\"']?([\w-]+)", re.IGNORECASE)
+
+
+def frontmatter_status(lines: List[str]) -> Optional[str]:
+    """The `status:` value inside the leading `---` block, lower-cased."""
+    if not lines or lines[0].strip() != "---":
+        return None
+    for line in lines[1:]:
+        if line.strip() == "---":
+            return None
+        m = STATUS.match(line)
+        if m:
+            return m.group(1).lower()
+    return None
+
+
+class FileDiff(NamedTuple):
+    src: Optional[str]  # path before the commit, None when added
+    dst: Optional[str]  # path after the commit, None when deleted
+    content: Optional[List[str]]  # the whole new file, None when the diff has no hunk (pure rename, mode)
+
+
+def file_diffs(block: List[str]) -> List[FileDiff]:
+    """One commit's `-p -M -U<large>` output, split per file. Full context makes each hunk the whole file."""
+    diffs: List[FileDiff] = []
+    for start in [k for k, line in enumerate(block) if line.startswith("diff --git ")]:
+        a, _, b = block[start][len("diff --git a/"):].rpartition(" b/")
+        src: Optional[str] = a
+        dst: Optional[str] = b
+        content: Optional[List[str]] = None
+        for line in block[start + 1:]:
+            if line.startswith("diff --git "):
+                break
+            if content is not None:
+                if line[:1] in (" ", "+"):
+                    content.append(line[1:])
+            elif line.startswith("new file mode"):
+                src = None
+            elif line.startswith("deleted file mode"):
+                dst = None
+            elif line.startswith("rename from "):
+                src = line[len("rename from "):]
+            elif line.startswith("rename to "):
+                dst = line[len("rename to "):]
+            elif line.startswith("@@"):
+                content = []
+        diffs.append(FileDiff(src, dst, content))
+    return diffs
 
 
 def parse_issue_log(text: str) -> List[Issue]:
-    """Issues from `git log --reverse -p -U0` over docs/issues (each commit headed by MARK + ISO date)."""
+    """Issues from `git log --reverse -M -p -U<large>` over docs/issues, each commit headed by MARK + ISO date."""
     issues: List[Issue] = []
-    live: Dict[str, List] = {}  # path -> [created, closed, reopens]
-    when: Optional[datetime] = None
-    old = path = None
-    header = False
-    for line in text.splitlines():
-        if line.startswith(MARK):
-            when = moment(line[1:].strip())
-        elif line.startswith("diff --git "):
-            header, old, path = True, None, None
-        elif header and line.startswith("--- "):
-            old = line[6:] if line.startswith("--- a/") else None
-        elif header and line.startswith("+++ "):
-            if line.startswith("+++ b/"):
-                path = line[6:]
-                if old is None:
-                    live[path] = [when, None, 0]
-            elif old in live:  # deleted: closed then, unless already done
-                created, closed, reopens = live.pop(old)
-                issues.append(Issue(created, closed or when, reopens))
-        elif line.startswith("@@"):
-            header = False
-        elif not header and path in live and STATUS.match(line):
-            rec = live[path]
-            if STATUS.match(line).group(1).lower() == "done":
+    live: Dict[str, List] = {}  # path -> [created, closed, reopens, started]
+    for commit in text.split(MARK)[1:]:
+        lines = commit.splitlines()
+        when = moment(lines[0].strip())
+        for d in file_diffs(lines[1:]):
+            if d.dst is None:  # deleted: closed then, unless already done
+                if d.src in live:
+                    created, closed, reopens, started = live.pop(d.src)
+                    issues.append(Issue(created, closed or when, reopens, started))
+                continue
+            added = d.src not in live
+            rec = [when, None, 0, True] if added else live.pop(d.src)
+            live[d.dst] = rec
+            if d.content is None:
+                continue
+            if frontmatter_status(d.content) == "done":
                 if rec[1] is None:
                     rec[1] = when
+                    rec[3] = rec[3] and not added
             elif rec[1] is not None:
                 rec[1], rec[2] = None, rec[2] + 1
     issues += [Issue(*rec) for rec in live.values()]
@@ -233,8 +297,8 @@ def parse_issue_log(text: str) -> List[Issue]:
 
 
 def file_issues(repo: Path, runner: Runner = run) -> List[Issue]:
-    log = runner(["git", "log", "--reverse", "--no-renames", f"--format={MARK}%cI", "-p", "-U0",
-                  "--", "docs/issues/*.md"], repo)
+    log = runner(["git", "-c", "core.quotePath=false", "log", "--reverse", "-M", f"--format={MARK}%aI",
+                  "-p", "-U100000", "--", "docs/issues/*.md"], repo)
     return parse_issue_log(log) if log else []
 
 
@@ -258,11 +322,8 @@ def gather(root: Path, allowed: Set[str], runner: Runner = run) -> Tuple[List[Pr
             issues += file_issues(repo, runner)
             if slug and slug not in seen:
                 seen.add(slug)
-                got, cut = gh_issues(slug, runner)
-                if got is None:
-                    skipped.append((f"{label} (GitHub)", "gh cannot read the repository's issues"))
-                if cut:
-                    skipped.append((f"{label} (reopens)", f"stopped after {MAX_PAGES} pages of issue events"))
+                got, notes = gh_issues(slug, runner)
+                skipped += [(f"{label} (GitHub)", note) for note in notes]
                 issues += got or []
         if not kept:
             continue
@@ -303,7 +364,7 @@ def open_at_week_end(issues: List[Issue], axis: List[date]) -> List[int]:
 
 
 def median_days(issues: List[Issue]) -> Optional[float]:
-    spans = [(i.closed - i.created).total_seconds() / 86400 for i in issues if i.closed]
+    spans = [(i.closed - i.created).total_seconds() / 86400 for i in issues if i.closed and i.started]
     return statistics.median(spans) if spans else None
 
 
@@ -328,6 +389,7 @@ h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;text-transform:uppercase;lett
 .name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nums{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;text-align:right;font-size:13px}
 .nums div{white-space:nowrap}.nums small{display:block;color:var(--mute);font-size:11px}
+.note{display:block;font-weight:400;font-size:11px;color:var(--mute);white-space:normal}
 .head{color:var(--mute);font-size:12px}
 .chart{position:relative}
 svg{display:block;width:100%}
@@ -398,6 +460,11 @@ def strip_svg(counts: List[int], top: int, height: int = 26) -> str:
             f'vector-effect="non-scaling-stroke"/>{bars}</svg>')
 
 
+def unstarted(p: Project) -> str:
+    n = sum(1 for i in p.issues if not i.started)
+    return f'<small class="note">{n} without a start date, left out of the median</small>' if n else ""
+
+
 def nums(cells: List[Tuple[str, str]]) -> str:
     return '<div class="nums">' + "".join(f"<div>{v}<small>{k}</small></div>" for v, k in cells) + "</div>"
 
@@ -451,7 +518,7 @@ def render(projects: List[Project], built_at: str) -> str:
         for p, strip in zip(projects, strips):
             p_open = sum(1 for i in p.issues if i.closed is None)
             rows.append(
-                f'<div class="row"><div class="name" title="{html.escape(p.name)}">{html.escape(p.name)}</div>'
+                f'<div class="row"><div class="name" title="{html.escape(p.name)}">{html.escape(p.name)}{unstarted(p)}</div>'
                 f'<div class="chart">{strip_svg(strip, top)}</div>'
                 + nums([(len(p.issues), "opened"), (len(p.issues) - p_open, "closed"), (p_open, "open"),
                         (fmt_days(median_days(p.issues)), "median"), (sum(i.reopens for i in p.issues), "reopens"),
@@ -461,7 +528,7 @@ def render(projects: List[Project], built_at: str) -> str:
         rows.append(f'<div class="row"><div></div><div>{ticks(axis)}</div><div></div></div>')
         body = (
             '<div class="kpis">' + "".join(f'<div class="kpi"><b>{v}</b><span>{k}</span></div>' for v, k in kpis)
-            + f'</div><h2>Timeline</h2><p class="sub">Per week, all projects together, {span}.</p>{timeline}'
+            + f'</div><h2>Timeline</h2><p class="sub">Per week, all projects together, {span}. Weeks start on Monday, UTC.</p>{timeline}'
             + '<h2>Projects</h2><p class="sub">Most recent activity first. Same weeks as the timeline. '
             + 'Median is days from opened to closed.</p>' + "".join(rows)
             + '<h2>Metrics</h2><p class="sub">Watched, never optimised.</p>'

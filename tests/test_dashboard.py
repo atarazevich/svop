@@ -63,6 +63,53 @@ class IssueFiles(unittest.TestCase):
             Issue(t(2026, 3, 21, 10), None, 0),
         ])
 
+    def test_rename_keeps_the_issue(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_repo(Path(tmp) / "garden")
+            body = "---\nstatus: {}\n---\n# Build a trellis\n" + "".join(f"step {k}\n" for k in range(20))
+            commit_file(repo, "docs/issues/trellis.md", body.format("ready"), "2026-03-02T10:00:00Z")
+            git(repo, "mv", "docs/issues/trellis.md", "docs/issues/07-trellis.md")
+            git(repo, "commit", "-m", "x", when="2026-03-04T10:00:00Z")
+            git(repo, "mv", "docs/issues/07-trellis.md", "docs/issues/7-trellis.md")
+            (repo / "docs/issues/7-trellis.md").write_text(body.format("done"))
+            git(repo, "add", "-A")
+            git(repo, "commit", "-m", "x", when="2026-03-06T10:00:00Z")
+            got = issues.file_issues(repo)
+        self.assertEqual(got, [Issue(t(2026, 3, 2, 10), t(2026, 3, 6, 10), 0)])
+
+    def test_added_already_done_counts_as_closed_without_a_start(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_repo(Path(tmp) / "garden")
+            commit_file(repo, "docs/issues/old.md", "---\nstatus: done\n---\n", "2026-03-02T10:00:00Z")
+            commit_file(repo, "docs/issues/new.md", "---\nstatus: idea\n---\n", "2026-03-02T10:00:00Z")
+            commit_file(repo, "docs/issues/new.md", "---\nstatus: done\n---\n", "2026-03-03T10:00:00Z")
+            got = issues.file_issues(repo)
+        self.assertEqual(got, [Issue(t(2026, 3, 2, 10), t(2026, 3, 2, 10), 0, False),
+                               Issue(t(2026, 3, 2, 10), t(2026, 3, 3, 10), 0, True)])
+        self.assertEqual(issues.median_days(got), 1.0)
+        page = issues.render([Project("garden", got)], "t")
+        self.assertIn("1 without a start date", page)
+        self.assertIn("<b>2</b><span>closed</span>", page)
+
+    def test_status_counts_only_inside_frontmatter(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_repo(Path(tmp) / "garden")
+            text = "---\nstatus: ready\n---\n# Fence\n\nstatus: done\n"
+            commit_file(repo, "docs/issues/fence.md", text, "2026-03-02T10:00:00Z")
+            commit_file(repo, "docs/issues/fence.md", text + "status: done again\n", "2026-03-05T10:00:00Z")
+            got = issues.file_issues(repo)
+        self.assertEqual(got, [Issue(t(2026, 3, 2, 10), None, 0)])
+        self.assertIsNone(issues.frontmatter_status(["# Title", "status: done"]))
+        self.assertEqual(issues.frontmatter_status(["---", "title: x", "Status: 'Done'", "---"]), "done")
+
+    def test_author_date_not_committer_date(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_repo(Path(tmp) / "garden")
+            commit_file(repo, "docs/issues/a.md", "---\nstatus: idea\n---\n", "2026-03-02T10:00:00Z")
+            git(repo, "commit", "--amend", "-q", "--no-edit", "--no-reset-author", when=None)
+            got = issues.file_issues(repo)
+        self.assertEqual(got[0].created, t(2026, 3, 2, 10))
+
 
 class Finding(unittest.TestCase):
     def test_symlinks_nested_repos_worktrees_and_skips(self):
@@ -110,9 +157,23 @@ class GitHub(unittest.TestCase):
         self.assertEqual(issues.github_slug(Path("."), runner), "someone/garden")
         self.assertEqual(calls[1], ["git", "remote", "get-url", "origin"])
         self.assertEqual(issues.gh_issues("someone/garden", runner), ([
-            Issue(t(2026, 4, 1, 8), t(2026, 4, 5, 9), 2), Issue(t(2026, 4, 6, 23, 30), None, 0)], False))
+            Issue(t(2026, 4, 1, 8), t(2026, 4, 5, 9), 2), Issue(t(2026, 4, 6, 23, 30), None, 0)], []))
         self.assertEqual(sum(c[:2] == ["gh", "api"] for c in calls), 2)
-        self.assertEqual(issues.gh_issues("someone/garden", lambda cmd, cwd: None), (None, False))
+        self.assertEqual(issues.gh_issues("someone/garden", lambda cmd, cwd: None, lambda cmd: "why"),
+                         (None, ["why"]))
+
+    def test_notes_on_cut_offs_and_failed_pages(self):
+        row = {"number": 1, "createdAt": "2026-04-01T08:00:00Z", "closedAt": None}
+        full = json.dumps([dict(row, number=n) for n in range(1, issues.MAX_ISSUES + 1)])
+
+        def runner(cmd, cwd):
+            if cmd[1] == "issue":
+                return full
+            return "100\n" if cmd[2].endswith("page=1") else None
+
+        got, notes = issues.gh_issues("someone/garden", runner, lambda cmd: "unused")
+        self.assertEqual(len(got), issues.MAX_ISSUES)
+        self.assertEqual(notes, [f"first {issues.MAX_ISSUES} issues only", "reopens incomplete (gh failed on page 2)"])
 
     def test_reopen_paging_stops_after_max_pages(self):
         pages = []
@@ -122,7 +183,8 @@ class GitHub(unittest.TestCase):
             return "100\n3\n"
 
         counts, cut = issues.reopens("someone/garden", runner)
-        self.assertEqual((counts, cut, len(pages)), ({3: issues.MAX_PAGES}, True, issues.MAX_PAGES))
+        self.assertEqual((counts, len(pages)), ({3: issues.MAX_PAGES}, issues.MAX_PAGES))
+        self.assertIn("stopped after", cut)
 
 
 class Ownership(unittest.TestCase):
