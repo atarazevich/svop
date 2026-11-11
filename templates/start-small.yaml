@@ -1,11 +1,18 @@
 # Template: Start small. For a new idea, or a project with one area. One team owns everything.
-version: 1
+version: 2
 project: <project>
+herdr: {workspace: <project>}
 orchestrator:
   session: <project>-orchestrator
+  herdr: {tab: "★ orchestrator"}
 teams:
   - name: build
     owns: Everything in the project
     boundary: None yet.
     workflows: [issues, development, design]
     status: active
+    herdr: {tab: "◇ build"}
+    claude:
+      append-system-prompt-file: .claude/teams/build/role.md
+      permission-mode: bypassPermissions
+      settings: {autoCompactEnabled: true, outputStyle: default}

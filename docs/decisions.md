@@ -20,3 +20,6 @@ Stages moved from `CLAUDE.md` to `docs/plan.md`, read only by the `plan` skill. 
 
 ## 2026-11-09 — CLAUDE.md has a Goal slot
 `Goal` is the first section of the CLAUDE.md contract: the near goal, measurable and visible from outside. It is a slot: empty is fine. Nothing is gated on it; the plan skill mentions it only when clearly relevant; the owner index shows it first. Context: the owner wants every project tied to a goal, but the goal forms in the owner's own time ("процесс внутри человека происходит"), so it is never forced (04:35, softened 04:40).
+
+## 2026-11-11 — teams.yaml says how each session starts; `svop` starts it
+`teams.yaml` version 2 adds `root`, `repos`, `env_file`, `herdr` labels, `session_id` and `claude:` (Claude Code's own flags, passed through, session over project key by key). One script, `svop.py` (`up`, `start`, `stop`), replaces the hand recipe in `team.md` step 6. `session_id` is the only resume switch: a missing transcript is an error, never a fresh start. Context: the start recipe was prose in `team.md` and hardcoded flags in the Router's `orc.py`; the owner chose one file and one script, nothing else (#4).

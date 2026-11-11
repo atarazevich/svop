@@ -1,30 +1,52 @@
 # Template: Web service. For a service that runs on a server: an API, an AI agent that talks
 # to your users, and a dashboard for you. Four teams.
-version: 1
+version: 2
 project: <project>
+herdr: {workspace: <project>}
 orchestrator:
   session: <project>-orchestrator
+  herdr: {tab: "★ orchestrator"}
 teams:
   - name: backend
     owns: API, workers, database, deploys, every call to an outside service
     boundary: The only code that writes to outside services. Other teams read through its API.
     workflows: [issues, development]
     status: active
+    herdr: {tab: "◇ backend"}
+    claude:
+      append-system-prompt-file: .claude/teams/backend/role.md
+      permission-mode: bypassPermissions
+      settings: {autoCompactEnabled: true, outputStyle: default}
 
   - name: agent
     owns: "The AI agent your users talk to: prompts, replies, the runtime"
     boundary: Never builds against guessed fields.
     workflows: [issues, development]
     status: active
+    herdr: {tab: "◇ agent"}
+    claude:
+      append-system-prompt-file: .claude/teams/agent/role.md
+      permission-mode: bypassPermissions
+      settings: {autoCompactEnabled: true, outputStyle: default}
 
   - name: dashboard
     owns: Your own view of the service
     boundary: Reads only. Anything it needs from the backend is an issue in the backend's area.
     workflows: [issues, development, design]
     status: active
+    herdr: {tab: "◇ dashboard"}
+    claude:
+      append-system-prompt-file: .claude/teams/dashboard/role.md
+      permission-mode: bypassPermissions
+      settings: {autoCompactEnabled: true, outputStyle: default}
 
   - name: monitor
     owns: Production failures. Read-only
     boundary: Never fixes, deploys or approves. Reads, groups, opens tickets, routes, follows up.
     workflows: [monitor]
     status: active
+    herdr: {tab: "◇ monitor"}
+    claude:
+      append-system-prompt-file: .claude/teams/monitor/role.md
+      permission-mode: bypassPermissions
+      settings: {autoCompactEnabled: true, outputStyle: default}

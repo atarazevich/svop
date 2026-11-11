@@ -10,6 +10,8 @@ The project is the folder this session runs in. Refuse only the home folder itse
 
 Clone the repository the owner named into `~/.svop`. If `~/.svop` already exists, run `git -C ~/.svop pull`.
 
+Install the `svop` command, which starts the sessions: `mkdir -p ~/.local/bin && ln -sf ~/.svop/svop.py ~/.local/bin/svop`. It runs with `uv` (step 3).
+
 ## 3. Install what is missing
 
 Check each tool. Install only what is missing.
@@ -18,9 +20,10 @@ Check each tool. Install only what is missing.
 |---|---|---|
 | git | `git --version` | macOS: `xcode-select --install` (a system dialog opens; tell the owner to click Install and wait). Linux: the system package manager. |
 | gh (GitHub CLI) | `gh --version` | `brew install gh` if Homebrew is present, otherwise the instructions at https://cli.github.com for this system. |
+| uv | `uv --version` | `curl -LsSf https://astral.sh/uv/install.sh \| sh`, or `brew install uv`. |
 | herdr | `herdr --version` | `curl -fsSL https://herdr.dev/install.sh \| sh`, or `brew install herdr`. |
 
-The herdr script installs into `~/.local/bin`. If that folder is not on `PATH`, add `export PATH="$HOME/.local/bin:$PATH"` to the shell profile (`~/.zshrc` for zsh, `~/.bashrc` for bash) and to the current shell, then check `herdr --version`.
+The herdr and uv scripts and the `svop` link go into `~/.local/bin`. If that folder is not on `PATH`, add `export PATH="$HOME/.local/bin:$PATH"` to the shell profile (`~/.zshrc` for zsh, `~/.bashrc` for bash) and to the current shell, then check `herdr --version` and `svop --help`.
 
 If an install fails, tell the owner what failed in one sentence and what you will try next.
 

@@ -1,17 +1,29 @@
 # Template: App. For an app people install, plus the site where they find and download it. Two teams.
-version: 1
+version: 2
 project: <project>
+herdr: {workspace: <project>}
 orchestrator:
   session: <project>-orchestrator
+  herdr: {tab: "★ orchestrator"}
 teams:
   - name: app
     owns: "The app: its code, builds, versions and releases"
     boundary: The only team that ships a new version of the app.
     workflows: [issues, development, design]
     status: active
+    herdr: {tab: "◇ app"}
+    claude:
+      append-system-prompt-file: .claude/teams/app/role.md
+      permission-mode: bypassPermissions
+      settings: {autoCompactEnabled: true, outputStyle: default}
 
   - name: site
     owns: "The website and launch material: pages, copy, screenshots, download links"
     boundary: Never changes app code. Facts about the app come from the app team as an issue answer.
     workflows: [issues, development, design]
     status: active
+    herdr: {tab: "◇ site"}
+    claude:
+      append-system-prompt-file: .claude/teams/site/role.md
+      permission-mode: bypassPermissions
+      settings: {autoCompactEnabled: true, outputStyle: default}
