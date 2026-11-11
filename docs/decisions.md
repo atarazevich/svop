@@ -29,3 +29,6 @@ On a first start in a folder Claude Code has never opened, `svop start`/`up` rea
 
 ## 2026-11-11 — Model defaults in the templates
 The orchestrator starts on `model: fable`; each team on `model: opus` with `effort: medium`, so `svop up` gives it by default. Context: the owner's own running setup, set before the projects move to a server. A cheaper model for the developer subagent was considered and dropped for now.
+
+## 2026-11-11 — Audience, promise, and the OpenClaw contrast
+We write for solo builders who run several real products or clients and hit the wall of supervision. The promise: "the deeper your agents go, the clearer they come back"; the readable return leads, autonomy follows. The contrast with OpenClaw stays in the subtext. Context: audience research of 2026-11-11 (people who hit the wall go back to fewer sessions and ask for a return that reads in seconds); the owner confirmed.
