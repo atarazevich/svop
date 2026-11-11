@@ -58,12 +58,16 @@ class Base(unittest.TestCase):
         patches = [mock.patch.dict(os.environ, {"HOME": str(self.home)}),
                    mock.patch.object(svop, "live", return_value=None),
                    mock.patch.object(svop, "herdr", side_effect=self.fake_herdr),
+                   mock.patch.object(svop, "read_pane", side_effect=lambda pane: self.screens.pop(0)),
+                   mock.patch.object(svop.time, "sleep"),
                    mock.patch.object(svop.subprocess, "run", side_effect=AssertionError("no subprocess in tests"))]
         for p in patches:
             p.start()
             self.addCleanup(p.stop)
         self.calls = []
         self.status = "idle"
+        self.up = mock.ANY  # the session id herdr reports for a started pane; ANY: every session comes up at once
+        self.screens = []
         self.cfg = svop.load(str(self.root))
 
     def tearDown(self):
@@ -85,7 +89,13 @@ class Base(unittest.TestCase):
                                           "agent_status": self.status, "agent_session": {"value": "live-id"}},
                                          {"pane_id": "w1:p5", "tab_id": "w1:t5", "agent": None},
                                          {"pane_id": "w1:p6", "tab_id": "w1:t6", "agent": "claude"}]}}
+        if args[:2] == ("pane", "get"):
+            up = self.up if not self.screens else None
+            return {"result": {"pane": {"agent_session": {"value": up} if up else None}}}
         return {}  # `pane run` prints nothing
+
+    def run_call(self):
+        return next(c for c in self.calls if c[:2] == ("pane", "run"))
 
     def session(self, name):
         return self.session_of(self.cfg, name)
@@ -145,7 +155,7 @@ class Resume(Base):
         self.transcript_for(s, s.sid)
         with redirect_stdout(io.StringIO()):
             svop.start(self.cfg, s, {}, dry=False)
-        run = self.calls[-1]
+        run = self.run_call()
         self.assertEqual(run[:3], ("pane", "run", "w1:p5"))  # the old tab's free shell, no new tab
         self.assertNotIn("create", [c[1] for c in self.calls])
         self.assertIn(f"claude -n old --resume {s.sid} ", run[3])
@@ -156,7 +166,7 @@ class Resume(Base):
                 redirect_stdout(io.StringIO()) as out:
             svop.start(self.cfg, s, {}, dry=False)
         self.assertEqual(out.getvalue(), "build started in ◇ build\n")
-        self.assertIn("claude -n build --session-id 22222222-2222-2222-2222-222222222222 ", self.calls[-1][3])
+        self.assertIn("claude -n build --session-id 22222222-2222-2222-2222-222222222222 ", self.run_call()[3])
         text = self.path.read_text()
         self.assertEqual(text, TEAMS.replace("  - name: build\n",
                                              "  - name: build\n    session_id: 22222222-2222-2222-2222-222222222222\n"))
@@ -247,6 +257,54 @@ class Env(Base):
             svop.main(line[1:])
         self.assertEqual(ex.call_args[0][2]["TOKEN"], "s3cr3t")
         self.assertEqual(ex.call_args[0][1][:3], ["claude", "-n", "build"])
+
+
+DIALOG = """ Accessing workspace:
+ /some/folder
+ Quick safety check: Is this a project you created or one you trust?
+ {no} No, exit
+ {yes} Yes, I trust this folder
+ Enter to confirm · Esc to cancel
+"""
+ON_NO, ON_YES = DIALOG.format(no="❯", yes=" "), DIALOG.format(no=" ", yes="❯")
+
+
+class Trust(Base):
+    def keys(self):
+        return [c[3] for c in self.calls if c[:2] == ("pane", "send-keys")]
+
+    def test_dialog_is_answered_yes(self):
+        self.screens = ["", ON_NO, ON_YES]
+        with redirect_stdout(io.StringIO()) as out:
+            svop.start(self.cfg, self.session("build"), {}, dry=False)
+        self.assertEqual(self.keys(), ["down", "enter"])
+        self.assertIn("build: trusted", out.getvalue())
+
+    def test_dialog_not_fully_drawn_gets_no_key(self):
+        self.screens = [ON_YES.replace("Enter to confirm", "")] * 3
+        with mock.patch.object(svop.time, "monotonic", side_effect=[0, 1, 2, 3, 99]), redirect_stdout(io.StringIO()), \
+                mock.patch("sys.stderr", new_callable=io.StringIO) as err:
+            svop.start(self.cfg, self.session("build"), {}, dry=False)
+        self.assertEqual(self.keys(), [])
+        self.assertIn("not up after", err.getvalue())
+
+    def test_trusted_folder_gets_no_key(self):
+        with redirect_stdout(io.StringIO()):
+            svop.start(self.cfg, self.session("build"), {}, dry=False)
+        self.assertEqual(self.keys(), [])
+
+    def test_folder_outside_the_project_is_never_answered(self):
+        self.screens = [ON_YES]
+        s = self.session("build")._replace(cwd=str(self.root.parent / "elsewhere"))
+        with redirect_stdout(io.StringIO()), self.assertRaisesRegex(svop.Fail, "outside the project root"):
+            svop.start(self.cfg, s, {}, dry=False)
+        self.assertEqual(self.keys(), [])
+
+    def test_dry_run_says_it_and_sends_nothing(self):
+        with redirect_stdout(io.StringIO()) as out:
+            svop.start(self.cfg, self.session("build"), {}, dry=True)
+        self.assertIn("asks to trust", out.getvalue())
+        self.assertEqual(self.calls, [])
 
 
 class UpAndStop(Base):

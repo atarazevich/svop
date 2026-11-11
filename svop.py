@@ -22,6 +22,7 @@ import re
 import shlex
 import subprocess
 import sys
+import time
 import uuid
 from typing import Dict, List, NamedTuple, Optional
 
@@ -29,6 +30,8 @@ import yaml
 
 REGISTRY = "~/.cache/router/projects.json"
 SELF = os.path.realpath(__file__)
+TRUST_YES = "Yes, I trust this folder"  # an option of Claude Code's first-start dialog
+TRUST_WAIT = 30  # seconds a new session gets to show the dialog or come up
 
 
 class Fail(Exception):
@@ -218,6 +221,34 @@ def herdr(*args: str) -> Dict:
     return json.loads(out.stdout) if out.stdout.strip() else {}  # `pane run` prints nothing
 
 
+def read_pane(pane: str) -> str:
+    return subprocess.run(["herdr", "pane", "read", pane, "--source", "visible"], capture_output=True, text=True).stdout
+
+
+def answer_trust(cfg: Dict, s: Session, sid: str, pane: str) -> None:
+    """A first start in a folder Claude Code has never opened stops at its trust dialog ("❯ No, exit" / "Yes, I
+    trust this folder"). Keys go only to a dialog fully on screen, for a folder inside the project root: Down while
+    the marker is not on "Yes", Enter when it is. Done when herdr reports the session up: Claude Code runs its hooks,
+    which tell herdr the session id, only in a trusted folder."""
+    root = os.path.realpath(cfg["_root"])
+    inside = os.path.commonpath([root, os.path.realpath(s.cwd)]) == root
+    end = time.monotonic() + TRUST_WAIT
+    while time.monotonic() < end:
+        if (herdr("pane", "get", pane)["result"]["pane"].get("agent_session") or {}).get("value") == sid:
+            return
+        screen = read_pane(pane)
+        if TRUST_YES in screen and "Enter to confirm" in screen:
+            if not inside:
+                raise Fail(f"{s.name}: Claude Code asks to trust {s.cwd}, which is outside the project root {root}; "
+                           f"svop does not answer for it. Answer in the tab {s.tab}")
+            on_yes = re.search(rf"❯\s*{TRUST_YES}", screen)
+            herdr("pane", "send-keys", pane, "enter" if on_yes else "down")
+            if on_yes:
+                print(f"{s.name}: trusted {s.cwd} (Claude Code's first-start dialog)")
+        time.sleep(0.5)
+    print(f"{s.name}: not up after {TRUST_WAIT} s; read its pane (herdr pane read {pane})", file=sys.stderr)
+
+
 def pane_for(cfg: Dict, s: Session, ws: Dict, dry: bool) -> str:
     """The pane the session runs in. A tab with the session's label whose pane runs no agent (a shell left by an
     ended session) is reused; else a new tab. A workspace created here comes with one tab and pane; the first
@@ -275,10 +306,12 @@ def start(cfg: Dict, s: Session, ws: Dict, dry: bool) -> None:
     pane = pane_for(cfg, s, ws, dry)
     run = ["herdr", "pane", "run", pane, shlex.join(command(cfg, s, sid, resume=bool(s.sid)))]
     if dry:
+        print(f"# if Claude Code asks to trust {s.cwd}, svop answers yes, only inside {cfg['_root']}")
         print(shlex.join(run))
         return
     herdr(*run[1:])
     print(f"{s.name} started in {s.tab}")
+    answer_trust(cfg, s, sid, pane)
 
 
 def stop(s: Session) -> None:
