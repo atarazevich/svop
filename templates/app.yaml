@@ -5,6 +5,7 @@ herdr: {workspace: <project>}
 orchestrator:
   session: <project>-orchestrator
   herdr: {tab: "★ orchestrator"}
+  claude: {model: fable}
 teams:
   - name: app
     owns: "The app: its code, builds, versions and releases"
@@ -13,6 +14,8 @@ teams:
     status: active
     herdr: {tab: "◇ app"}
     claude:
+      model: opus
+      effort: medium
       append-system-prompt-file: .claude/teams/app/role.md
       permission-mode: bypassPermissions
       settings: {autoCompactEnabled: true, outputStyle: default}
@@ -24,6 +27,8 @@ teams:
     status: active
     herdr: {tab: "◇ site"}
     claude:
+      model: opus
+      effort: medium
       append-system-prompt-file: .claude/teams/site/role.md
       permission-mode: bypassPermissions
       settings: {autoCompactEnabled: true, outputStyle: default}

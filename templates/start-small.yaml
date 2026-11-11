@@ -5,6 +5,7 @@ herdr: {workspace: <project>}
 orchestrator:
   session: <project>-orchestrator
   herdr: {tab: "★ orchestrator"}
+  claude: {model: fable}
 teams:
   - name: build
     owns: Everything in the project
@@ -13,6 +14,8 @@ teams:
     status: active
     herdr: {tab: "◇ build"}
     claude:
+      model: opus
+      effort: medium
       append-system-prompt-file: .claude/teams/build/role.md
       permission-mode: bypassPermissions
       settings: {autoCompactEnabled: true, outputStyle: default}

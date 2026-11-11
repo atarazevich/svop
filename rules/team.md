@@ -38,7 +38,7 @@ The only list of teams is `.claude/teams.yaml`. A small project has one team.
   - `session_id` (optional): the chat to resume. Present: the session starts with `--resume <id>`, and if that chat has no transcript in its `cwd`, start stops with an error instead of starting fresh. Absent: the first start makes one and writes it here.
   - `cwd` (optional): the session's folder, relative to `root`; default `.`.
   - `herdr: {tab}`: the tab label.
-  - `claude`: the session's own flags, merged over the project's key by key. A team's include `append-system-prompt-file: .claude/teams/<name>/role.md`.
+  - `claude`: the session's own flags, merged over the project's key by key. A team's include `append-system-prompt-file: .claude/teams/<name>/role.md`. The templates set the models: the orchestrator runs on `model: fable`, each team on `model: opus` with `effort: medium`. Change them in the row.
 
 Each team also has a folder `.claude/teams/<name>/` with `role.md`. The role holds only what no workflow and no row says.
 

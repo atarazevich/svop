@@ -6,6 +6,7 @@ herdr: {workspace: <project>}
 orchestrator:
   session: <project>-orchestrator
   herdr: {tab: "★ orchestrator"}
+  claude: {model: fable}
 teams:
   - name: backend
     owns: API, workers, database, deploys, every call to an outside service
@@ -14,6 +15,8 @@ teams:
     status: active
     herdr: {tab: "◇ backend"}
     claude:
+      model: opus
+      effort: medium
       append-system-prompt-file: .claude/teams/backend/role.md
       permission-mode: bypassPermissions
       settings: {autoCompactEnabled: true, outputStyle: default}
@@ -25,6 +28,8 @@ teams:
     status: active
     herdr: {tab: "◇ agent"}
     claude:
+      model: opus
+      effort: medium
       append-system-prompt-file: .claude/teams/agent/role.md
       permission-mode: bypassPermissions
       settings: {autoCompactEnabled: true, outputStyle: default}
@@ -36,6 +41,8 @@ teams:
     status: active
     herdr: {tab: "◇ dashboard"}
     claude:
+      model: opus
+      effort: medium
       append-system-prompt-file: .claude/teams/dashboard/role.md
       permission-mode: bypassPermissions
       settings: {autoCompactEnabled: true, outputStyle: default}
@@ -47,6 +54,8 @@ teams:
     status: active
     herdr: {tab: "◇ monitor"}
     claude:
+      model: opus
+      effort: medium
       append-system-prompt-file: .claude/teams/monitor/role.md
       permission-mode: bypassPermissions
       settings: {autoCompactEnabled: true, outputStyle: default}

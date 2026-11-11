@@ -26,3 +26,6 @@ Stages moved from `CLAUDE.md` to `docs/plan.md`, read only by the `plan` skill. 
 
 ## 2026-11-11 — svop answers the trust dialog in the pane
 On a first start in a folder Claude Code has never opened, `svop start`/`up` reads the session's pane and, when the trust dialog is fully drawn and the folder is inside the project root, moves to "Yes, I trust this folder" and presses Enter; it stops waiting when herdr reports the session's id. Context: Claude Code 2.1.322 has no CLI flag or setting to trust a folder for an interactive session (`--trust-workspace` is only for ultrareview; `-p` skips the dialog but is not interactive), and the other way, writing `hasTrustDialogAccepted` into `~/.claude.json`, edits Claude Code's own global state file. The dialog's default is "No, exit", so a blind Enter would quit; keys are sent only after the marker is read off the screen (#5).
+
+## 2026-11-11 — Model defaults in the templates
+The orchestrator starts on `model: fable`; each team on `model: opus` with `effort: medium`, so `svop up` gives it by default. Context: the owner's own running setup, set before the projects move to a server. A cheaper model for the developer subagent was considered and dropped for now.
