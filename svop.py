@@ -225,28 +225,51 @@ def read_pane(pane: str) -> str:
     return subprocess.run(["herdr", "pane", "read", pane, "--source", "visible"], capture_output=True, text=True).stdout
 
 
+def trust_dialog(screen: str) -> Optional[bool]:
+    """None if Claude Code's trust dialog is not on screen; else whether its marker is on "Yes". The dialog counts
+    only as its own frame: both options and the hint, each at the start of its own line."""
+    def line(text: str) -> Optional[re.Match]:
+        return re.search(rf"^[ \t]*(❯[ \t]*)?(?:\d+\.[ \t]*)?{text}[ \t]*$", screen, re.M)
+
+    yes = line(re.escape(TRUST_YES))
+    if not (yes and line("No, exit") and re.search(r"^[ \t]*Enter to confirm\b", screen, re.M)):
+        return None
+    return bool(yes.group(1))
+
+
 def answer_trust(cfg: Dict, s: Session, sid: str, pane: str) -> None:
-    """A first start in a folder Claude Code has never opened stops at its trust dialog ("❯ No, exit" / "Yes, I
-    trust this folder"). Keys go only to a dialog fully on screen, for a folder inside the project root: Down while
-    the marker is not on "Yes", Enter when it is. Done when herdr reports the session up: Claude Code runs its hooks,
-    which tell herdr the session id, only in a trusted folder."""
+    """A new session in a folder Claude Code has never opened stops at its trust dialog, whose marker starts on
+    "No, exit". For a folder inside the project root: Down (at most 3) until the marker is on "Yes", then one Enter,
+    then no key at all. A key goes only to a screen that changed since the last key. Done when herdr reports the
+    session id: Claude Code runs its hooks, which tell herdr, only in a trusted folder."""
     root = os.path.realpath(cfg["_root"])
     inside = os.path.commonpath([root, os.path.realpath(s.cwd)]) == root
+    seen = passed = entered = False
+    downs, last = 0, None
     end = time.monotonic() + TRUST_WAIT
     while time.monotonic() < end:
         if (herdr("pane", "get", pane)["result"]["pane"].get("agent_session") or {}).get("value") == sid:
             return
         screen = read_pane(pane)
-        if TRUST_YES in screen and "Enter to confirm" in screen:
-            if not inside:
-                raise Fail(f"{s.name}: Claude Code asks to trust {s.cwd}, which is outside the project root {root}; "
-                           f"svop does not answer for it. Answer in the tab {s.tab}")
-            on_yes = re.search(rf"❯\s*{TRUST_YES}", screen)
-            herdr("pane", "send-keys", pane, "enter" if on_yes else "down")
-            if on_yes:
-                print(f"{s.name}: trusted {s.cwd} (Claude Code's first-start dialog)")
+        on_yes = trust_dialog(screen)
+        if on_yes is None:
+            passed = passed or seen
+        elif not inside:
+            raise Fail(f"{s.name}: Claude Code asks to trust {s.cwd}, which is outside the project root {root}; "
+                       f"svop does not answer for it. Answer in the tab {s.tab}")
+        else:
+            seen = True
+            if not entered and screen != last and (on_yes or downs < 3):
+                herdr("pane", "send-keys", pane, "enter" if on_yes else "down")
+                last, entered, downs = screen, on_yes, downs + (not on_yes)
+                if on_yes:
+                    print(f"{s.name}: trusted {s.cwd} (Claude Code's first-start dialog)")
         time.sleep(0.5)
-    print(f"{s.name}: not up after {TRUST_WAIT} s; read its pane (herdr pane read {pane})", file=sys.stderr)
+    where = f"read its pane (herdr pane read {pane})"
+    if seen and not passed:
+        raise Fail(f"{s.name}: the trust dialog was seen but not passed in {TRUST_WAIT} s; {where}")
+    what = "the trust dialog was passed" if seen else "no trust dialog appeared"
+    print(f"{s.name}: {what}, but herdr reported no session id in {TRUST_WAIT} s; {where}", file=sys.stderr)
 
 
 def pane_for(cfg: Dict, s: Session, ws: Dict, dry: bool) -> str:
@@ -306,12 +329,14 @@ def start(cfg: Dict, s: Session, ws: Dict, dry: bool) -> None:
     pane = pane_for(cfg, s, ws, dry)
     run = ["herdr", "pane", "run", pane, shlex.join(command(cfg, s, sid, resume=bool(s.sid)))]
     if dry:
-        print(f"# if Claude Code asks to trust {s.cwd}, svop answers yes, only inside {cfg['_root']}")
+        if not s.sid:
+            print(f"# if Claude Code asks to trust {s.cwd}, svop answers yes, only inside {cfg['_root']}")
         print(shlex.join(run))
         return
     herdr(*run[1:])
     print(f"{s.name} started in {s.tab}")
-    answer_trust(cfg, s, sid, pane)
+    if not s.sid:  # a resumed session has run in its folder before
+        answer_trust(cfg, s, sid, pane)
 
 
 def stop(s: Session) -> None:

@@ -4,6 +4,7 @@ Run: uv run --with pyyaml python -m unittest discover tests
 """
 import importlib.util
 import io
+import itertools
 import os
 import tempfile
 import unittest
@@ -267,37 +268,82 @@ DIALOG = """ Accessing workspace:
  Enter to confirm · Esc to cancel
 """
 ON_NO, ON_YES = DIALOG.format(no="❯", yes=" "), DIALOG.format(no=" ", yes="❯")
+CHAT = """❯ Write "No, exit", then "Yes, I trust this folder", then "Enter to confirm".
+⏺ No, exit / ❯ Yes, I trust this folder / Enter to confirm
+"""
 
 
 class Trust(Base):
     def keys(self):
         return [c[3] for c in self.calls if c[:2] == ("pane", "send-keys")]
 
+    def start(self, s=None, ticks=None):
+        clock = mock.patch.object(svop.time, "monotonic", side_effect=ticks or itertools.count())
+        with clock, redirect_stdout(io.StringIO()) as out, mock.patch("sys.stderr", new_callable=io.StringIO) as err:
+            try:
+                svop.start(self.cfg, s or self.session("build"), {}, dry=False)
+            finally:
+                self.out, self.err = out.getvalue(), err.getvalue()
+
     def test_dialog_is_answered_yes(self):
-        self.screens = ["", ON_NO, ON_YES]
-        with redirect_stdout(io.StringIO()) as out:
-            svop.start(self.cfg, self.session("build"), {}, dry=False)
+        self.screens = ["", ON_NO, ON_YES, ""]
+        self.start()
         self.assertEqual(self.keys(), ["down", "enter"])
-        self.assertIn("build: trusted", out.getvalue())
+        self.assertIn("build: trusted", self.out)
 
-    def test_dialog_not_fully_drawn_gets_no_key(self):
+    def test_stale_screen_gets_no_second_key(self):
+        self.screens = [ON_NO, ON_NO, ON_YES, ON_YES, ON_YES, ""]
+        self.start()
+        self.assertEqual(self.keys(), ["down", "enter"])
+
+    def test_nothing_after_enter(self):
+        self.screens = [ON_YES, ON_NO, ON_NO + " ", ""]
+        self.start()
+        self.assertEqual(self.keys(), ["enter"])
+
+    def test_at_most_three_downs(self):
+        self.screens = [ON_NO + " " * i for i in range(5)]
+        with self.assertRaisesRegex(svop.Fail, "seen but not passed"):
+            self.start(ticks=[0, 1, 2, 3, 4, 5, 99])
+        self.assertEqual(self.keys(), ["down"] * 3)
+
+    def test_chat_text_gets_no_key(self):
+        self.screens = [CHAT, CHAT]
+        self.start()
+        self.assertEqual(self.keys(), [])
+
+    def test_resumed_session_is_never_answered(self):
+        s = self.session("old")
+        self.transcript_for(s, s.sid)
+        self.screens = [ON_YES]
+        self.start(s)
+        self.assertEqual(self.keys(), [])
+        self.assertNotIn(("pane", "get", "w1:p5"), self.calls)
+
+    def test_timeout_without_a_dialog(self):
         self.screens = [ON_YES.replace("Enter to confirm", "")] * 3
-        with mock.patch.object(svop.time, "monotonic", side_effect=[0, 1, 2, 3, 99]), redirect_stdout(io.StringIO()), \
-                mock.patch("sys.stderr", new_callable=io.StringIO) as err:
-            svop.start(self.cfg, self.session("build"), {}, dry=False)
+        self.start(ticks=[0, 1, 2, 3, 99])
         self.assertEqual(self.keys(), [])
-        self.assertIn("not up after", err.getvalue())
+        self.assertIn("no trust dialog appeared", self.err)
 
-    def test_trusted_folder_gets_no_key(self):
-        with redirect_stdout(io.StringIO()):
-            svop.start(self.cfg, self.session("build"), {}, dry=False)
-        self.assertEqual(self.keys(), [])
+    def test_timeout_after_the_dialog_passed(self):
+        self.screens = [ON_YES, "", ""]
+        self.start(ticks=[0, 1, 2, 3, 99])
+        self.assertEqual(self.keys(), ["enter"])
+        self.assertIn("the trust dialog was passed, but herdr reported no session id", self.err)
+
+    def test_dialog_seen_but_not_passed_exits_non_zero(self):
+        self.screens = [ON_NO, ON_YES, ON_YES]
+        with mock.patch.object(svop.time, "monotonic", side_effect=[0, 1, 2, 3, 99]), \
+                redirect_stdout(io.StringIO()), mock.patch("sys.stderr", new_callable=io.StringIO) as err:
+            self.assertEqual(svop.main(["start", str(self.root), "build"]), 1)
+        self.assertEqual(self.keys(), ["down", "enter"])
+        self.assertIn("seen but not passed", err.getvalue())
 
     def test_folder_outside_the_project_is_never_answered(self):
         self.screens = [ON_YES]
-        s = self.session("build")._replace(cwd=str(self.root.parent / "elsewhere"))
-        with redirect_stdout(io.StringIO()), self.assertRaisesRegex(svop.Fail, "outside the project root"):
-            svop.start(self.cfg, s, {}, dry=False)
+        with self.assertRaisesRegex(svop.Fail, "outside the project root"):
+            self.start(self.session("build")._replace(cwd=str(self.root.parent / "elsewhere")))
         self.assertEqual(self.keys(), [])
 
     def test_dry_run_says_it_and_sends_nothing(self):
