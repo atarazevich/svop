@@ -2,7 +2,7 @@
 # to your users, and a dashboard for you. Four teams.
 version: 2
 project: <project>
-herdr: {workspace: <project>}
+herdr: {space: <project>}
 orchestrator:
   session: <project>-orchestrator
   herdr: {tab: "★ orchestrator"}

@@ -1,7 +1,7 @@
 # Template: App. For an app people install, plus the site where they find and download it. Two teams.
 version: 2
 project: <project>
-herdr: {workspace: <project>}
+herdr: {space: <project>}
 orchestrator:
   session: <project>-orchestrator
   herdr: {tab: "★ orchestrator"}

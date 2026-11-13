@@ -1,7 +1,7 @@
 # Template: Start small. For a new idea, or a project with one area. One team owns everything.
 version: 2
 project: <project>
-herdr: {workspace: <project>}
+herdr: {space: <project>}
 orchestrator:
   session: <project>-orchestrator
   herdr: {tab: "★ orchestrator"}

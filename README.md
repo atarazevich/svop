@@ -137,7 +137,7 @@ Every correction you give is saved as a memory. You decide which memories become
 - Six agent files, eleven rule files, a `teams.yaml`, one folder per team and the `grill` and `plan` skills in your project's `.claude/` folder. Nothing goes into `~/.claude/`, so other projects stay as they are. An existing file with the same name is kept as `<name>.md.bak`.
 - A short `CLAUDE.md` if there is none.
 - Two GitHub labels: `idea` and `ready`.
-- The tools `gh`, `uv` and `herdr`, if missing. herdr shows each Claude session as a tab.
+- The tools `gh`, `uv`, herdr-core (`hc`) and the Herdr app, if missing. herdr-core keeps each Claude session running in its own terminal; the Herdr app shows each one as a tab.
 - A copy of this repository in `~/.svop`, and the `svop` command (`~/.local/bin/svop`, a link to `~/.svop/svop.py`) that starts the sessions.
 
 **Remove**
@@ -146,7 +146,7 @@ Every correction you give is saved as a memory. You decide which memories become
 2. Rename any `.bak` file back.
 3. Delete `CLAUDE.md` if setup created it, `~/.svop` and `~/.local/bin/svop`.
 4. `gh label delete idea` and `gh label delete ready`.
-5. Optional: `brew uninstall herdr gh`.
+5. Optional: `brew uninstall gh`, and remove the Herdr app and herdr-core.
 
 </details>
 
@@ -156,7 +156,7 @@ Every correction you give is saved as a memory. You decide which memories become
 ```
 INSTALL.md          the steps Claude follows to install SVOP
 svop.py             `svop up|start|stop <project>`: starts the sessions
-                    teams.yaml describes, in herdr
+                    teams.yaml describes, in hc and the Herdr app
 agents/             six agents → .claude/agents/
                     developer, code-reviewer, bloat-reviewer,
                     ponytail-reviewer, designer, design-critic

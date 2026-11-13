@@ -25,7 +25,7 @@ The only list of teams is `.claude/teams.yaml`. A small project has one team.
 - `root` (optional): the project folder; default, the folder that holds `.claude/`.
 - `repos` (optional): `{path, url}` pairs, `path` relative to `root`. `svop up` clones a missing one.
 - `env_file` (optional): a `KEY=VALUE` file outside git, read as data (no shell) and given to every session's `claude` process only. Its values are never printed.
-- `herdr: {workspace}`: the herdr workspace label; default, `project`.
+- `herdr: {space}`: the name of the Herdr app space the sessions show in; default, `project`.
 - `claude` (optional): Claude Code flags for every session, passed through unchanged: `key: value` is `--key value`, `true` a bare flag, a list the flag's values, a mapping (e.g. `settings`, `mcp-config`) one JSON string. Relative paths are passed unchanged, so they resolve from the session's `cwd`.
 - `orchestrator`: the orchestrator's `session` name, and like every team row `session_id`, `cwd` (relative to `root`), `herdr: {tab}` and `claude`. The orchestrator has no role folder; the base rules are its role.
 - `teams`: one row per area, with these fields:
@@ -46,7 +46,7 @@ Each team also has a folder `.claude/teams/<name>/` with `role.md`. The role hol
 
 - **Orchestrator**: session from `orchestrator.session`, tab label `★ orchestrator`.
 - **Team**: session `<name>`, tab label `◇ <name>`, role file `.claude/teams/<name>/role.md`. The owner may look in but never has to follow it.
-- The session name is passed as `-n`. A row without `herdr: {tab}` gets the label above.
+- The session name is passed as `-n`. Its `hc` terminal is named `<project>-<session>` (once, if the session name already starts with `<project>-`), which must be 1-32 of `a-z 0-9 - _`. A row without `herdr: {tab}` gets the label above.
 - A tab with no mark is the owner's own and not part of the harness.
 
 `<project>` is the name of the project folder.
@@ -67,16 +67,16 @@ Each team also has a folder `.claude/teams/<name>/` with `role.md`. The role hol
 
 When the owner says "set up the harness", the session that hears it does these steps, in order:
 
-1. **Check the tools and the repository.** `claude --version`, `herdr --version`, `uv --version`, `svop --help`, `gh auth status`. If a tool is missing or `gh` is not logged in, follow steps 2 to 4 of SVOP's `INSTALL.md` (in `~/.svop`), then continue. If `git config user.name` or `user.email` is empty, set them as in step 5 of SVOP's `INSTALL.md` before any commit. If the folder is not a git repository, run `git init`. If it has no commits, make a first commit. If it has no GitHub remote (`gh repo view` fails), ask the owner whether to keep the issues local. Local: issues use file mode (`issues-workflow.md`, `docs/issues/`); skip `gh repo create` and step 3. Otherwise run `gh repo create <folder name> --private --source . --push`.
+1. **Check the tools and the repository.** `claude --version`, `hc --version`, `uv --version`, `svop --help`, `gh auth status`. If a tool is missing or `gh` is not logged in, follow steps 2 to 4 of SVOP's `INSTALL.md` (in `~/.svop`), then continue. If `git config user.name` or `user.email` is empty, set them as in step 5 of SVOP's `INSTALL.md` before any commit. If the folder is not a git repository, run `git init`. If it has no commits, make a first commit. If it has no GitHub remote (`gh repo view` fails), ask the owner whether to keep the issues local. Local: issues use file mode (`issues-workflow.md`, `docs/issues/`); skip `gh repo create` and step 3. Otherwise run `gh repo create <folder name> --private --source . --push`.
 2. **Check the files.** In this project's `.claude/`: the six agents are in `agents/`. `team.md`, `orchestration.md`, `knowledge.md`, `git.md`, `plan.md` and the `*-workflow.md` files are in `rules/`. `grill` and `plan` are in `skills/`. If one is missing, stop and name it.
 3. **Create the labels**, if they do not exist (GitHub mode only):
    ```
    gh label create idea --color FBCA04 --description "Needs exploration"
    gh label create ready --color 0E8A16 --description "Scoped, executable"
    ```
-4. **Write the registry.** Read `CLAUDE.md` and the top-level folders, then pick the template in `~/.svop/templates/` that fits: `web-service.yaml` (backend, agent, dashboard, monitor), `app.yaml` (app, site) or `start-small.yaml` (one `build` team). Ask the owner one question: name the three templates in one line each, say which you recommend and why. Recommend by what `CLAUDE.md` describes; when unsure, recommend `start-small.yaml`. Copy the chosen template to `.claude/teams.yaml`, set `project`, `herdr.workspace` and `orchestrator.session` (`<project>-orchestrator` by default), and map each row's `owns` to the real folders. If the project has a remote, add it under `repos` as `{path: ., url: github.com/<owner>/<repo>}`. If sessions of this project already run, record each one's id as its `session_id` (the `sessionId` in `~/.claude/sessions/<pid>.json` whose `name` and `cwd` match). For each row, copy `~/.svop/teams/<name>/` to `.claude/teams/<name>/`. Then check: every team has `teams/<name>/role.md`, and every name in `workflows:` has `rules/<name>-workflow.md`. If one is missing, stop and name it. Commit `teams.yaml`, the team folders and the rules together in one commit, then push if there is a remote.
-5. **Check herdr is running.** `herdr status`. If no server runs, ask the owner to open herdr in a terminal.
-6. **Start the sessions**: `svop up <project>`. It clones missing `repos`, makes sure the herdr workspace exists, and starts the orchestrator and every `active` team without a `schedule`, each in its own tab, with the flags from `teams.yaml`. `--dry-run` prints the commands and runs nothing. If Claude Code asks whether to trust a session's folder on its first start, `svop` answers yes, and only for a folder inside the project root. Teams start with auto-compact on and without permission prompts, because they run long without the owner. The orchestrator keeps the owner's own settings.
+4. **Write the registry.** Read `CLAUDE.md` and the top-level folders, then pick the template in `~/.svop/templates/` that fits: `web-service.yaml` (backend, agent, dashboard, monitor), `app.yaml` (app, site) or `start-small.yaml` (one `build` team). Ask the owner one question: name the three templates in one line each, say which you recommend and why. Recommend by what `CLAUDE.md` describes; when unsure, recommend `start-small.yaml`. Copy the chosen template to `.claude/teams.yaml`, set `project`, `herdr.space` and `orchestrator.session` (`<project>-orchestrator` by default), and map each row's `owns` to the real folders. If the project has a remote, add it under `repos` as `{path: ., url: github.com/<owner>/<repo>}`. If sessions of this project already run, record each one's id as its `session_id` (the `sessionId` in `~/.claude/sessions/<pid>.json` whose `name` and `cwd` match). For each row, copy `~/.svop/teams/<name>/` to `.claude/teams/<name>/`. Then check: every team has `teams/<name>/role.md`, and every name in `workflows:` has `rules/<name>-workflow.md`. If one is missing, stop and name it. Commit `teams.yaml`, the team folders and the rules together in one commit, then push if there is a remote.
+5. **Check the core and the window.** `hc server status` must show a core; if none runs, `hc server start`. The window is optional: `herdr-app ls` answers when the Herdr app is open. If it does not, tell the owner in one line that the sessions will run without a window until they open Herdr.
+6. **Start the sessions**: `svop up <project>`. It clones missing `repos` and starts the orchestrator and every `active` team without a `schedule`, each in its own `hc` terminal, with the flags from `teams.yaml`. When the Herdr app is open, each terminal shows in the project's space (made if missing) under its tab label; with no window they run all the same, and `svop` says so in one line. `--dry-run` prints the commands and runs nothing. On a session's first start, if Claude Code asks whether to trust its folder, `svop` answers yes, and only for a folder inside the project root. For a session started with `dangerously-load-development-channels`, it confirms "I am using this for local development" under the same limit. `svop` answers only before Claude Code runs, never into a running chat. Teams start with auto-compact on and without permission prompts, because they run long without the owner. The orchestrator keeps the owner's own settings.
 
 For each `active` team with a `schedule`, write `~/Library/LaunchAgents/svop.<project>.<name>.plist` and load it; it gets no tab. In `StartCalendarInterval`, `Hour` and `Minute` are the row's `"HH:MM"`. Find the path of `claude` with `command -v claude`; `PATH` must hold the folders of `claude`, `gh` and `bus`.
 
@@ -109,12 +109,19 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/svop.<project>.<name>.pl
 
 launchd does not read `~/.zshrc`, and the job must not get `ANTHROPIC_API_KEY`: with it set, `claude -p` drops the claude.ai connectors (Google Drive). The job uses the owner's claude.ai login, so when that login ends, the passes fail until the owner logs in again.
 
-7. **Check the sessions.** Run `ListAgents`. The orchestrator and every team without a `schedule` must appear by name. If one is missing, read its pane (`herdr pane read <pane id>`) and fix it. For each scheduled team, `launchctl print gui/$(id -u)/svop.<project>.<name>` must show the job.
+7. **Check the sessions.** Run `ListAgents`. The orchestrator and every team without a `schedule` must appear by name. If one is missing, read its terminal (`hc read <project>-<session> --lines 40`) and fix it. For each scheduled team, `launchctl print gui/$(id -u)/svop.<project>.<name>` must show the job.
 8. **Hand over.** Tell the owner to switch to the `★ orchestrator` tab and talk only there.
 
-To restart after a crash, run `svop up <project>` again: live sessions are left alone, the others resume from their `session_id`. One session: `svop start <project> <session>`; `svop stop <project> <session>` types `/exit` into its tab when it is idle and never kills a process.
+To restart after a crash or a reboot, run `svop up <project>` again: live sessions are left alone, the others resume from their `session_id`, each in a tab with its label. One session: `svop start <project> <session>`.
 
-Status: `herdr agent list`, `herdr pane read <pane id>`.
+`svop stop <project> <session>` types `/exit` into the session's terminal only when its status is idle or done, and never kills a process. It types `/exit` into the tab, so a draft left unsent there is sent with it. A session resumed and not used since reports no status, so `svop stop` refuses it: type `/exit` in its tab.
+
+Status: `hc ls`, `hc get <project>-<session>`, `hc read <project>-<session>`.
+
+**A project on a server.** `svop` runs on the machine that holds the project folder. From the owner's machine (`hc machine ls` lists the servers):
+1. Start: `hc run --on <machine> --cwd <project folder> -- sh -lc "svop up ."`. It shows what `svop` prints. If it ends with `still running as <machine>/<t>`, `svop` goes on: `hc wait <machine>/<t>`, then `hc read <machine>/<t>` and `hc rm <machine>/<t>`. The server has no window, so the terminals run unseen.
+2. Show: `herdr-app do space.new --name <project> --machine <machine> --folder <project folder>`. It prints the space, its first tab and that tab's shell, each as `<machine>/<id>`.
+3. For each session: `hc label <machine>/<project>-<session> herdr.space=<space id without "<machine>/">`. It shows as a new tab; name it with `herdr-app do tab.rename --id <its tab id> --name "<label>"` (`herdr-app ls` gives the id). Then close the first tab's shell: `hc kill <machine>/<shell>`.
 
 ## Add or pause a team
 
@@ -140,5 +147,5 @@ Status: `herdr agent list`, `herdr pane read <pane id>`.
     status: active
   ```
   When product exists, no other row edits `docs/plan.md` or `CLAUDE.md`.
-- **Pause.** Set `status: paused` and run `svop stop <project> <name>`, then close the team's tab. A scheduled team: `launchctl bootout gui/$(id -u)/svop.<project>.<name>`, then `launchctl disable gui/$(id -u)/svop.<project>.<name>` so it does not start again at login. To resume: `launchctl enable` with the same target, then `launchctl bootstrap` as in step 6, and set `status: active`.
+- **Pause.** Set `status: paused` and run `svop stop <project> <name>` (if it refuses, see `svop stop` above). Its terminal ends and its tab closes. A scheduled team: `launchctl bootout gui/$(id -u)/svop.<project>.<name>`, then `launchctl disable gui/$(id -u)/svop.<project>.<name>` so it does not start again at login. To resume: `launchctl enable` with the same target, then `launchctl bootstrap` as in step 6, and set `status: active`.
 - Commit the change.

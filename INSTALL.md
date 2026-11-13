@@ -21,9 +21,10 @@ Check each tool. Install only what is missing.
 | git | `git --version` | macOS: `xcode-select --install` (a system dialog opens; tell the owner to click Install and wait). Linux: the system package manager. |
 | gh (GitHub CLI) | `gh --version` | `brew install gh` if Homebrew is present, otherwise the instructions at https://cli.github.com for this system. |
 | uv | `uv --version` | `curl -LsSf https://astral.sh/uv/install.sh \| sh`, or `brew install uv`. |
-| herdr | `herdr --version` | `curl -fsSL https://herdr.dev/install.sh \| sh`, or `brew install herdr`. |
+| herdr-core (`hc`), runs the sessions' terminals | `hc --version` | `curl -fsSL https://releases.herdr.dev/core/install.sh \| sh` |
+| Herdr app, shows them (optional; not on a server) | `herdr-app --version` | `curl -fsSL https://releases.herdr.dev/app/install.sh \| sh`, or `brew install --cask herdr-app` (Apple Silicon). It also installs herdr-core if missing. |
 
-The herdr and uv scripts and the `svop` link go into `~/.local/bin`. If that folder is not on `PATH`, add `export PATH="$HOME/.local/bin:$PATH"` to the shell profile (`~/.zshrc` for zsh, `~/.bashrc` for bash) and to the current shell, then check `herdr --version` and `svop --help`.
+The `hc`, `herdr-app` and uv commands and the `svop` link go into `~/.local/bin`. If that folder is not on `PATH`, add `export PATH="$HOME/.local/bin:$PATH"` to the shell profile (`~/.zshrc` for zsh, `~/.bashrc` for bash) and to the current shell, then check `hc --version` and `svop --help`.
 
 If an install fails, tell the owner what failed in one sentence and what you will try next.
 
@@ -63,7 +64,7 @@ If the project has no `CLAUDE.md`, ask the owner one question: "What are you mak
 
 ## 8. Set up the harness
 
-Follow "Setting up the harness" in `<project>/.claude/rules/team.md`, from step 1. herdr must be running for its step 5: if it is not, ask the owner to open a new terminal window and type `herdr`.
+Follow "Setting up the harness" in `<project>/.claude/rules/team.md`, from step 1. Its step 5 checks herdr-core and the Herdr window: if the app is installed but closed, ask the owner to open Herdr.
 
 ## 9. Hand over
 

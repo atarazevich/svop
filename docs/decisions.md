@@ -32,3 +32,6 @@ The orchestrator starts on `model: fable`; each team on `model: opus` with `effo
 
 ## 2026-11-11 — Audience, promise, and the OpenClaw contrast
 We write for solo builders who run several real products or clients and hit the wall of supervision. The promise: "the deeper your agents go, the clearer they come back"; the readable return leads, autonomy follows. The contrast with OpenClaw stays in the subtext. Context: audience research of 2026-11-11 (people who hit the wall go back to fewer sessions and ask for a return that reads in seconds); the owner confirmed.
+
+## 2026-11-13 — svop runs sessions in herdr-core; the Herdr app only shows them
+Each session runs in its own named `hc` terminal; when the Herdr app answers, the terminal shows in the project's space, and with no window it runs all the same. `svop` talks only to its own machine's core; a remote project is started there and shown from the owner's machine. How: `rules/team.md`, step 6 and "A project on a server". Context: the owner moved from the old herdr to herdr-core and the Herdr app (#7).
